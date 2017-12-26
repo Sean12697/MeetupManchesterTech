@@ -1,0 +1,56 @@
+body {
+    background-color: aqua;
+    text-align: center;
+}
+
+main {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.group {
+    display: inline-block;
+    width: 150px;
+    height: 200px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.group img {
+  object-fit: cover;
+    width: 100px;
+    height: 100px;
+    padding-bottom: 0px;
+}
+
+.group .groupText {
+    
+}
+
+.event {
+    background-color: aquamarine;
+    margin: 10px 0px;
+    padding-right: 10px;
+}
+
+.event p {
+    padding-bottom: 0px;
+}
+
+.event .numbers, .event .details {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.event .numbers {
+    width: 30%;
+}
+
+.event .details {
+    text-align: left;
+    width: 70%;
+}
+
+.generate, .groups, .search {
+    padding: 10px 0px;
+}
