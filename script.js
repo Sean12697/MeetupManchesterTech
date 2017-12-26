@@ -45,7 +45,7 @@ function initGetMeetups() {
 
     $.when(...MeetupsJSON)
         .then((...MeetupsJSON) => {
-            MeetupsJSON = MeetupsJSON.map(a => a[0]);
+            MeetupsJSON = MeetupsJSON.map(a => a[0].data);
             console.log(MeetupsJSON);
             drawMeetups(MeetupsJSON);
         });
@@ -57,7 +57,7 @@ function generateCalendar() {
 
     $.when(...eventsJSON)
         .then((...eventsJSON) => {
-            eventsJSON = eventsJSON.map(a => a[0])
+            eventsJSON = eventsJSON.map(a => a[0].data)
                 .reduce((prev, curr) => [...prev, ...curr], []);
             eventsJSON.sort(function (a, b) {
                 return a.time > b.time;
@@ -92,28 +92,28 @@ function searchMeetups() {
     var groups = document.getElementsByClassName("group");
     for (var i = 0; i < groups.length; i++) {
         if (groups[i].innerHTML.includes(term)) {
-       groups[i].style.display = "inline-block";
-            } else {
-       groups[i].style.display = "none";
-            }
+            groups[i].style.display = "inline-block";
+        } else {
+            groups[i].style.display = "none";
+        }
     }
 }
 
 function showAllMeetups() {
     var group = getElementsByClassName("group");
     for (var i = 0; i < group.length; i++) {
-       group[i].style.display = "inline-block";
+        group[i].style.display = "inline-block";
     }
 }
 
 app.getEvents = (meetup) => $.ajax({
     url: 'https://api.meetup.com/' + meetup + '/events',
     method: 'GET',
-    dataType: 'json'
+    dataType: 'jsonp'
 });
 
 app.getMeetups = (meetup) => $.ajax({
     url: 'https://api.meetup.com/' + meetup,
     method: 'GET',
-    dataType: 'json'
+    dataType: 'jsonp'
 });
