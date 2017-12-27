@@ -44,8 +44,7 @@ function init() {
     generate.addEventListener("click", function () {
         generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()));
     });
-    // search.addEventListener("click", searchMeetups);
-    searchBox.addEventListener("keyup", searchMeetups);
+    searchBox.addEventListener("keyup", searchMeetups); 
     select.addEventListener("click", selectAllShown);
     deselect.addEventListener("click", deselectAllShown);
 
