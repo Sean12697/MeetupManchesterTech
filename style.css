@@ -1,11 +1,23 @@
 body {
-    background-color: aqua;
+    background-color: #edf0f4;
     text-align: center;
 }
 
 main {
     width: 90%;
     margin: 0 auto;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: 'Poiret One', cursive;
+}
+
+p, a, li, small, details, summary, input {
+	font-family: 'Raleway', serif;
+}
+
+h1 {
+    padding: 20px 0px;
 }
 
 h3 {
@@ -16,52 +28,105 @@ a {
     text-decoration: none;
 }
 
+#searchBox {
+    width: 80%;
+}
+
+.types input, .select input, .generate input {
+    background-color: #edf0f4;
+    border: 2px solid gray;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.9em;
+    margin: 4px 2px;
+    padding: 5px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.types input:hover, .select input:hover, .generate input:hover {
+    background-color: lightgray;
+    transform: scale(1.05);
+}
+
 .day {
-    font-size: 1.4em;
+    font-size: 1.6em;
 }
 
 .group {
     display: inline-block;
-    width: 120px;
-    height: 200px;
-    margin: 0 auto;
-    padding: 10px;
+    width: 150px;
+    height: 260px;
+    margin: 10px;
+    background-color: #fff;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.group:hover {
+    transform: scale(1.1);
+}
+
+.groupText {
+    margin: 5px;
 }
 
 .group img {
-  object-fit: cover;
-    width: 100px;
-    height: 100px;
+    object-fit: cover;
+    width: 150px;
+    height: 150px;
     padding-bottom: 0px;
 }
 
-.event {
-    background-color: aquamarine;
-    margin: 10px 0px;
+.groupName {
+    height: 40px;
+    overflow: hidden;
 }
 
-.event .numbers, .event .details {
+.event {
+    background-color: #fff;
+    display: inline-block;
+    margin: 10px;
+    padding-top: 15px;
+    width: 200px;
+    height: 270px;
+    overflow: hidden;
+}
+
+.event .numbers,
+.event .details {
     display: inline-block;
     vertical-align: top;
-    padding-right: 10px;
-    margin: 0 auto;
+    margin: 0px 10px;
+}
+
+.event .details h4 {
+    height: 40px;
+    margin: 10px 0px;
+    overflow: hidden;
+}
+
+.event .numbers p {
+    padding: 0px;
+    margin: 5px;
 }
 
 .event .numbers {
-    width: 20%;
+    width: auto;
 }
 
 .event .details {
-    text-align: left;
-    width: 70%;
+    text-align: center;
 }
 
-.generate, .groups, .search, .sort, .select {
-    padding: 10px 0px;
-}
-
-.types input {
-    margin: 5px;
+.generate,
+.groups,
+.search,
+.sort,
+.select {
+    padding: 20px 0px;
 }
 
 .group input {
@@ -69,10 +134,52 @@ a {
 }
 
 label {
-  display: block;
-  position: relative;
+    display: block;
+    position: relative;
 }
 
 :checked + label img {
     opacity: 0.2;
+}
+
+@media screen and (max-width: 410px) {
+    .group {
+        width: 120px;
+        height: 220px;
+    }
+    .group img {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+@media screen and (min-width: 410px) and (max-width: 800px) {
+    .event {
+        margin: 10px;
+        padding-top: 5px;
+        width: 100%;
+        height: 120px;
+        text-align: left;
+    }
+    .event .details h4 {
+        height: 40px;
+        margin: 10px 0px;
+        overflow: hidden;
+    }
+    .event .numbers p {
+        padding: 0px;
+        margin: 5px;
+    }
+    .event .numbers {
+        text-align: center;
+    }
+    .event .details {
+        text-align: left;
+        width: 70%;
+    }
+    .event .details p {
+        margin: 4px;
+        height: 20px;
+        overflow: hidden;
+    }
 }

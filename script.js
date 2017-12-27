@@ -59,7 +59,7 @@ function drawMeetups(JSON) {
         var link = x.link;
         var members = x.members;
         var thumb = (x.hasOwnProperty('group_photo')) ? x.group_photo.photo_link : x.organizer.photo.photo_link;
-        var group = '<div class="group" id="' + i + '"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label><div class="groupText"><a href="' + link + '" target="_blank"><p>' + name + '</p></a><p>Members: ' + members + '</p></div></div>';
+        var group = '<div class="group" id="' + i + '"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '</p></div></div>';
         groupsContainer.insertAdjacentHTML('beforeend', group);
     }
 }
@@ -116,7 +116,7 @@ function drawCalendar(JSON) {
         var venueAddress = (x.hasOwnProperty('venue')) ? x.venue.address_1 : "";
         var venuePostcode = (x.hasOwnProperty('venue')) ? x.venue.city : "";
 
-        var event = '<div class="event"><div class="numbers"><p class="day">' + day + '</p><p>' + time + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '"><p>' + groupName + '</p></a></div>';
+        var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeConvert(time) + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '"><p>' + groupName + '</p></a></div>';
 
         if (month != date.substring(5, 7)) {
             month = date.substring(5, 7);
@@ -233,6 +233,33 @@ function fullArray() {
         a.push(i);
     }
     return a;
+}
+
+function ordinalSuffix(i) {
+    var x = i % 10,
+        y = i % 100;
+    if (x == 1 && y != 11) {
+        return i + "st";
+    }
+    if (x == 2 && y != 12) {
+        return i + "nd";
+    }
+    if (x == 3 && y != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+
+function timeConvert(i) {
+    var ampm;
+    var x;
+    if (i.substring(0,2) > 12) {
+        ampm = "PM";
+        x = i.substring(0,2) % 12 + ":" + i.substring(3,5) + ampm;
+    } else {
+        ampm = "AM";
+        x = i.substring(0,2) + ":" + i.substring(3,5) + ampm;
+    } return x;
 }
 
 function setupButtons() {
