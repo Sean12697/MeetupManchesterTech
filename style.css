@@ -8,6 +8,18 @@ main {
     margin: 0 auto;
 }
 
+h3 {
+    text-align: left;
+}
+
+a {
+    text-decoration: none;
+}
+
+.day {
+    font-size: 1.4em;
+}
+
 .group {
     display: inline-block;
     width: 120px;
@@ -23,27 +35,20 @@ main {
     padding-bottom: 0px;
 }
 
-.group .groupText {
-    
-}
-
 .event {
     background-color: aquamarine;
     margin: 10px 0px;
-    padding-right: 10px;
-}
-
-.event p {
-    padding-bottom: 0px;
 }
 
 .event .numbers, .event .details {
     display: inline-block;
     vertical-align: top;
+    padding-right: 10px;
+    margin: 0 auto;
 }
 
 .event .numbers {
-    width: 30%;
+    width: 20%;
 }
 
 .event .details {
@@ -51,6 +56,23 @@ main {
     width: 70%;
 }
 
-.generate, .groups, .search {
+.generate, .groups, .search, .sort, .select {
     padding: 10px 0px;
+}
+
+.types input {
+    margin: 5px;
+}
+
+.group input {
+    display: none;
+}
+
+label {
+  display: block;
+  position: relative;
+}
+
+:checked + label img {
+    opacity: 0.2;
 }
