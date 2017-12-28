@@ -225,7 +225,7 @@ label {
     top: 0;
     z-index: 100;
     position: fixed;
-    width: 90%;
+    width: 85%;
 }
 
 #navbar {
@@ -253,8 +253,8 @@ label {
 }
 
 .nav li {
+    padding: 3px 0px;
     display: inline-block;
-    margin-top: 4px;
     width: 32%;
     -webkit-transition-duration: 0.4s;
     transition-duration: 0.4s;
@@ -267,6 +267,9 @@ label {
 .nav li a {
     color: black;
     text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 @media all (max-width: 324px) {

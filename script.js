@@ -288,7 +288,7 @@ function timeConvert(i) {
 }
 
 $(window).scroll(function () {
-    if ($(window).scrollTop() > 450) {
+    if ($(window).scrollTop() > 460) {
         $('#navbar').addClass('navbarFixed');
     } else {
         $('#navbar').removeClass('navbarFixed');
