@@ -16,6 +16,10 @@ p, a, li, small, details, summary, input {
 	font-family: 'Raleway', serif;
 }
 
+#info {
+    font-size: 0.9em;
+}
+
 h1 {
     padding: 20px 0px;
 }
