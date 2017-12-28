@@ -229,31 +229,31 @@ label {
 }
 
 #navbar {
-	background-color: white;
-    height: 30px;
+    background-color: white;
 }
 
-.nav {width: auto;
-	/*Chrome Reset*/
+.nav {
+    width: auto;
+    /*Chrome Reset*/
     -webkit-padding-start: 0px;
     -webkit-margin-before: 0px;
     -webkit-margin-after: 0px;
-	/*Firefox Reset*/
+    /*Firefox Reset*/
     -moz-padding-start: 0px;
     -moz-margin-before: 0px;
     -moz-margin-after: 0px;
-	/*IE Reset*/
+    /*IE Reset*/
     -ms-padding-start: 0px;
     -ms-margin-before: 0px;
     -ms-margin-after: 0px;
-	/*Opera Reset*/
+    /*Opera Reset*/
     -o-padding-start: 0px;
     -o-margin-before: 0px;
     -o-margin-after: 0px;
 }
 
 .nav li {
-	display: inline-block;
+    display: inline-block;
     margin-top: 4px;
     width: 32%;
     -webkit-transition-duration: 0.4s;
@@ -262,16 +262,14 @@ label {
 
 .nav li:hover {
     transform: scale(1.1);
-    background-color: azure;
 }
 
 .nav li a {
-	color: black;
-	text-decoration: none;
+    color: black;
+    text-decoration: none;
 }
 
-
-@media screen and (max-width: 324px) {
+@media all (max-width: 324px) {
     .group {
         width: 40%;
         height: 240px;
@@ -282,7 +280,7 @@ label {
     }
 }
 
-@media screen (min-width: 324px) and (max-width: 480px) {
+@media all (min-width: 324px), (max-width: 480px) {
     .group {
         width: 100%;
         height: 100px;
@@ -292,7 +290,8 @@ label {
     }
     .meetupImg {
         display: inline-block;
-        vertical-align: top; /* 2 HOURS OF TESTING AND FAILIURE UNTIL THIS WORKED */
+        vertical-align: top;
+        /* 2 HOURS OF TESTING AND FAILIURE UNTIL THIS WORKED */
     }
     .group label {
         width: 100px;
@@ -323,7 +322,7 @@ label {
     }
 }
 
-@media screen (min-width: 324px) and (max-width: 600px) {
+@media all (min-width: 324px), (max-width: 600px) {
     .event {
         margin: 10px 0px;
         padding-top: 5px;

@@ -119,7 +119,7 @@ function drawCalendar(JSON, t) {
         var x = JSON[i];
         var desc = x.description.replace(/<(?:.|\n)*?>/gm, '').toUpperCase();
         var name = x.name.toUpperCase();
-        
+
         if (desc.includes(t) || name.includes(t)) {
 
             var eventName = x.name;
@@ -289,9 +289,11 @@ function timeConvert(i) {
 
 $(window).scroll(function () {
     if ($(window).scrollTop() > 450) {
-      $('#navbar').addClass('navbarFixed');
-    } else { $('#navbar').removeClass('navbarFixed'); }
-  });
+        $('#navbar').addClass('navbarFixed');
+    } else {
+        $('#navbar').removeClass('navbarFixed');
+    }
+});
 
 function setupButtons() {
     all = document.getElementById("all");
