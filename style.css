@@ -50,26 +50,44 @@ a {
     width: 200px;
 }
 
-.types input,
-.select input,
-.generate input {
+.search p {
+    margin: 5px;
+}
+
+
+/*
+.types {
+    height: 80px;
+    overflow: scroll;
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+*/
+
+input {
     background-color: #edf0f4;
     border: 2px solid gray;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
     font-size: 0.9em;
     margin: 4px 2px;
     padding: 5px;
+}
+
+input[type="text"] {
+    background: white;
+}
+
+input[type="button"] {
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
     -webkit-transition-duration: 0.4s;
-    /* Safari */
     transition-duration: 0.4s;
     cursor: pointer;
 }
 
-.types input:hover,
-.select input:hover,
-.generate input:hover {
+input[type="button"]:hover {
     background-color: lightgray;
     transform: scale(1.05);
 }
@@ -86,7 +104,6 @@ a {
     overflow: hidden;
     background-color: #fff;
     -webkit-transition-duration: 0.4s;
-    /* Safari */
     transition-duration: 0.4s;
 }
 
@@ -174,13 +191,9 @@ label {
     width: 60px;
     height: 60px;
     -webkit-animation: spin 1s linear infinite;
-    /* Safari */
     animation: spin 1s linear infinite;
     margin: 30px auto;
 }
-
-
-/* Safari */
 
 @-webkit-keyframes spin {
     0% {
@@ -220,7 +233,6 @@ label {
         text-align: left;
         font-size: 0.77em;
     }
-    
     .event .details h4 {
         height: 40px;
         margin: 10px 0px;
@@ -228,23 +240,19 @@ label {
         overflow: hidden;
         font-size: 1.3em;
     }
-    
     .event .numbers p {
         padding: 0px;
         margin: 5px;
         margin-right: 0px;
     }
-    
     .event .numbers {
         text-align: center;
         padding-top: 25px;
     }
-    
     .event .details {
         text-align: left;
         width: 70%;
     }
-    
     .event .details p {
         margin: 4px;
         height: 30px;

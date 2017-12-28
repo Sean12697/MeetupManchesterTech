@@ -31,13 +31,14 @@
     <main>
         <h1>Manchester Tech Meetups</h1>
         <details id="info">
-            <summary>Infomation (Click to Reveal)</summary>
+            <summary>Infomation/Instructions (Click to Reveal)</summary>
             <p>This is a project that I am developing (so please do give feedback), it uses the RESTful meetup API to generate a calendar (after clicking on the button) based on the groups you select (all selected by default), you can also click on the links to individual groups (as well as filter and search) which I have curated manually (and am in).</p>
             <p>INSTRUCTIONS: To use you can click on the meetups titles to be directed to their Meetup page, or you can click on their image to select/deselect (all selected by default), search through or filter them, then once you have the groups you want selected, if you click on the "Generate Events List" button at the bottom to do so.</p>
             <p>Creator - <a href="https://twitter.com/Sean12697" target="_blank">Sean O'Mahoney</a></p>
         </details>
         <div class="search">
-            <input type="search" id="searchBox" value="">
+            <p>Search Meetup Groups</p>
+            <input type="text" id="searchBox" value="">
         </div>
         <div class="types">
             <div>
@@ -66,7 +67,10 @@
             </details>
         </div>
         <div class="generate">
-            <input type="button" id="generate" value="Generate Events List">
+            <input type="button" id="generate" value="Generate Events List (For Selected Only)">
+            <br>
+            <input type="text" id="eventSearch">
+            <input type="button" id="searchEvents" value="Search by Term">
         </div>
         <div class="calendar" id="eventsContainer">
 
