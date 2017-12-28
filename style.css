@@ -30,6 +30,10 @@ input {
     font-size: 0.9em;
 }
 
+#eventSearch {
+    width: 110px;
+}
+
 h1 {
     padding: 20px 0px;
 }
