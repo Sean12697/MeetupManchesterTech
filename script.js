@@ -287,6 +287,12 @@ function timeConvert(i) {
     return x;
 }
 
+$(window).scroll(function () {
+    if ($(window).scrollTop() > 450) {
+      $('#navbar').addClass('navbarFixed');
+    } else { $('#navbar').removeClass('navbarFixed'); }
+  });
+
 function setupButtons() {
     all = document.getElementById("all");
     social = document.getElementById("social");

@@ -100,6 +100,10 @@ input[type="button"]:hover {
     font-size: 1.6em;
 }
 
+#groupsContainer {
+    padding-top: 10px;
+}
+
 .group {
     display: inline-block;
     width: 150px;
@@ -216,6 +220,56 @@ label {
         transform: rotate(360deg);
     }
 }
+
+.navbarFixed {
+    top: 0;
+    z-index: 100;
+    position: fixed;
+    width: 90%;
+}
+
+#navbar {
+	background-color: white;
+    height: 30px;
+}
+
+.nav {width: auto;
+	/*Chrome Reset*/
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+	/*Firefox Reset*/
+    -moz-padding-start: 0px;
+    -moz-margin-before: 0px;
+    -moz-margin-after: 0px;
+	/*IE Reset*/
+    -ms-padding-start: 0px;
+    -ms-margin-before: 0px;
+    -ms-margin-after: 0px;
+	/*Opera Reset*/
+    -o-padding-start: 0px;
+    -o-margin-before: 0px;
+    -o-margin-after: 0px;
+}
+
+.nav li {
+	display: inline-block;
+    margin-top: 4px;
+    width: 32%;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+.nav li:hover {
+    transform: scale(1.1);
+    background-color: azure;
+}
+
+.nav li a {
+	color: black;
+	text-decoration: none;
+}
+
 
 @media screen and (max-width: 324px) {
     .group {

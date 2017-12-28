@@ -29,7 +29,7 @@
 </head>
 
 <body>
-    <main>
+    <main id="top">
         <h1>Manchester Tech Meetups</h1>
         <details id="info">
             <summary>Infomation/Instructions (Click to Reveal)</summary>
@@ -60,7 +60,14 @@
             <input type="button" id="select" value="Select All Shown">
             <input type="button" id="deselect" value="Deselect All Shown">
         </div>
-        <div class="groups">
+        <nav id="navbar">
+            <ul class="nav">
+                <li><a href="#top">Top</a></li>
+                <li><a href="#groups">Groups</a></li>
+                <li><a href="#events">Events List</a></li>
+            </ul>
+        </nav>
+        <div class="groups" id="groups">
             <details open>
                 <summary>Groups (Click to Hide)</summary>
                 <div id="groupsContainer">
@@ -68,7 +75,7 @@
                 </div>
             </details>
         </div>
-        <div class="generate">
+        <div class="generate" id="events">
             <input type="button" id="generate" value="Generate Events List (For Selected Only)">
             <br>
             <input type="text" id="eventSearch">
