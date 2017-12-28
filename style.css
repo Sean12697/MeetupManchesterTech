@@ -235,26 +235,31 @@ label {
     .group {
         width: 100%;
         height: 14vh;
-        margin: 15px 0px;
+        margin: 8px 0px;
         text-align: left;
-        display: table;
         overflow: hidden;
+    }
+    .meetupImg {
+        display: inline-block;
+        vertical-align: top; /* 2 HOURS OF TESTING AND FAILIURE UNTIL THIS WORKED */
     }
     .group label {
         width: 14vh;
         height: 14vh;
         padding: 0px;
-        display: table-cell;
-        position: absolute;
+        margin: 0px;
+        display: inline-block;
+        overflow: hidden;
     }
     .groupText {
         padding: 0px 10px;
-        display: table-cell;
-        width: 69%;
+        display: inline-block;
+        width: 45%;
     }
     .groupName {
-        margin: 10px 0px;
+        margin: 0px;
         margin-right: 15px;
+        margin-top: 10px
     }
     .group img {
         object-fit: cover;
