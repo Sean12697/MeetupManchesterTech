@@ -22,6 +22,8 @@ var deselect;
 var groupsContainer;
 var eventsContainer;
 
+let gSelected = 0; // Bodge for one selected meetup group
+
 const meetups = ["android_mcr", "BCS-Greater-Manchester-Branch", "blabtalks", "meetup-group-wHuRVtrk", "CIA-Chicks-in-Advertising-Manchester", "Code-Your-Future-Manchester", "CodeUpManchester", "CodeUp-Salford", "Digital-Analytics-Manchester", "Digital_North_", "DotNetNorth", "Enterprise-UX", "freelance-folk-manchester", "HackerNestMAN", "hackspace-manchester", "HadoopManchester", "HCD-Manchester", "IoTMCR", "JavaScript-North-West", "Ladies-of-Code-Manchester", "Lean-Agile-Manchester", "MaccTech", "Magento-Minds-of-Manchester", "MancDB", "Manchester-Bitcoin-blockchain-and-other-cryptocurrencies", "Manchester-Angular-Workshop", "manchesterentrepreneursclub", "Manchester-Futurists", "Manchester-Grey-Hats", "Manchester-InfoSec", "ManchesterUK-Java-Community", "Power-BI-Manchester-Meetup", "Manchester-R", "Manchester-React-User-Group", "ManchesterWordPressUserGroup", "MancJS", "McrFRED", "McrUXD", "Messaging-Bots-Manchester", "Music-Culture-and-Technology", "Neo4j-Manchester", "North-West-IT-Crowd-Beer-BBQ-Event", "North-West-Ruby-User-Group", "Open-Data-Manchester", "Practical-Business-Workshops-Manchester", "RealUX", "Salford-Lean-Startup", "scala-developers", "SEO-Manchester", "Social-Software-Development-Meetup-in-Manchester", "Tech-for-Good-Live", "Tech-Leads-NW", "Test-Hive-Manchester", "ThoughtWorks-Manchester-Events", "UK-North-Crypto-Currency-Meetup", "The-UX-Crunch-North", "VRManchester", "AWS-User-Group-North", "Code-Nation", "Manchester-Open-Source", "DevOps-Manchester", "StartupBlink-Manchester", "nwdrupal", "Manchester-Xamarin-User-Group", "manchester-node-workshop", "DATA-VISUALISATION-MEETUP", "BlockchainManchesterMeetup", "Manchester-WordPress-SEO-Startup", "Manchester-Unity3D-Game-Dev-Meetup", "Google-Cloud-Platform-Users-North-West", "Manc-Bitcoin", "craftcmsmanchester", "Couchbase-Manchester", "NSManchester", "Python-North-West-Meetup", "Expert-Talks-Manchester"]; // wHuRVtrk = Blockchain, PJzMkpIw = Cyber Security Seminar, "meetup-group-PJzMkpIw"
 
 const months = new Map([['01', 'January'], ['02', 'February'], ['03', 'March'], ['04', 'April'], ['05', 'May'], ['06', 'June'], ['07', 'July'], ['08', 'August'], ['09', 'September'], ['10', 'October'], ['11', 'November'], ['12', 'December']]);
@@ -83,11 +85,15 @@ function generateCalendar(x) {
 
     $.when(...eventsJSON)
         .then((...eventsJSON) => {
+        if (gSelected > 1) {
             eventsJSON = eventsJSON.map(a => a[0].data)
                 .reduce((prev, curr) => [...prev, ...curr], [])
                 .sort(function (a, b) {
                     return a.time - b.time;
                 });
+    } else {
+              eventsJSON = eventsJSON.map(a => a.data)[0];
+              }
             console.log(eventsJSON);
             drawCalendar(eventsJSON);
         });
@@ -172,6 +178,7 @@ function getSelectedMeetupsIndexes() {
             selected.push(i);
         }
     }
+    gSelected = selected.length;
     return selected;
 }
 
