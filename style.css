@@ -221,6 +221,24 @@ label {
     }
 }
 
+#navSearch {
+    width: 90%;
+}
+
+#navSearchBox {
+    width: 90%;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.navSearchHide {
+    display: none;
+}
+
+.navSearchShow {
+    display: inline-block;
+}
+
 .navbarFixed {
     top: 0;
     z-index: 100;

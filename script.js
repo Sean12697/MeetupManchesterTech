@@ -2,6 +2,7 @@ const app = {};
 window.addEventListener('load', init);
 
 var searchBox;
+var navSearchBox;
 var search;
 var generate;
 
@@ -17,7 +18,9 @@ var blockchain;
 var method;
 
 var select;
+var selectShown;
 var deselect;
+var invertSelect;
 
 var groupsContainer;
 var eventsContainer;
@@ -40,9 +43,12 @@ function init() {
     });
     searchBox = document.getElementById("searchBox");
     search = document.getElementById("search");
+    navSearchBox = document.getElementById("navSearchBox");
     generate = document.getElementById("generate");
     select = document.getElementById("select");
+    selectShown = document.getElementById("selectShown");
     deselect = document.getElementById("deselect");
+    invertSelect = document.getElementById("invertSelect");
     groupsContainer = document.getElementById("groupsContainer");
     eventsContainer = document.getElementById("eventsContainer");
     eventSearch = document.getElementById("eventSearch");
@@ -52,8 +58,13 @@ function init() {
         generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()), "");
     });
     searchBox.addEventListener("keyup", searchMeetups);
+    navSearchBox.addEventListener("keyup", searchMeetups);
+    
     select.addEventListener("click", selectAllShown);
+    selectShown.addEventListener("click", selectOnlyAllShown);
     deselect.addEventListener("click", deselectAllShown);
+    invertSelect.addEventListener("click", invertSelection);
+    
     searchEvents.addEventListener("click", searchEventsFor);
 
     initGetMeetups();
@@ -151,6 +162,8 @@ function drawCalendar(JSON, t) {
 }
 
 function searchMeetups() {
+    navSearchBox.value = this.value;
+    searchBox.value = this.value;
     var term = searchBox.value;
     var groups = document.getElementsByClassName("group");
     for (var i = 0; i < groups.length; i++) {
@@ -178,12 +191,31 @@ function selectAllShown() {
     }
 }
 
+function selectOnlyAllShown() {
+    var group = document.getElementsByClassName("group");
+    for (var i = 0; i < group.length; i++) {
+        if (group[i].style.display === 'none') {
+            document.getElementById("g" + i).checked = true;
+        } else {
+            document.getElementById("g" + i).checked = false;
+        }
+    }
+}
+
 function deselectAllShown() {
     var group = document.getElementsByClassName("group");
     for (var i = 0; i < group.length; i++) {
         if (!(group[i].style.display === 'none')) {
             document.getElementById("g" + i).checked = true;
         }
+    }
+}
+
+function invertSelection() {
+    var group = document.getElementsByClassName("group");
+    for (var i = 0; i < group.length; i++) {
+        var x = document.getElementById("g" + i);
+        x.checked = (x.checked) ? false : true;
     }
 }
 
@@ -290,8 +322,12 @@ function timeConvert(i) {
 $(window).scroll(function () {
     if ($(window).scrollTop() > 460) {
         $('#navbar').addClass('navbarFixed');
+        $('#navSearch').removeClass('navSearchHide');
+        $('#navSearch').addClass('navSearchShow');
     } else {
         $('#navbar').removeClass('navbarFixed');
+        $('#navSearch').removeClass('navSearchShow');
+        $('#navSearch').addClass('navSearchHide');
     }
 });
 
@@ -325,7 +361,7 @@ function setupButtons() {
     specialized.value = "Specialized | " + getCatagoryAmount(specializedIndex);
     data.value = "Data | " + getCatagoryAmount(dataIndex);
     web.value = "Web | " + getCatagoryAmount(webIndex);
-    ladies.value = "Ladies/Women | " + getCatagoryAmount(ladiesIndex);
+    ladies.value = "Women/Ladies | " + getCatagoryAmount(ladiesIndex);
     blockchain.value = "Blockchain | " + getCatagoryAmount(blockchainIndex);
     method.value = "Methodologies | " + getCatagoryAmount(methodIndex);
 
