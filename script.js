@@ -4,6 +4,8 @@ window.addEventListener('load', init);
 var searchBox;
 var navSearchBox;
 var search;
+var clearSearch;
+var clearNavSearch;
 var generate;
 
 var all;
@@ -44,6 +46,8 @@ function init() {
     searchBox = document.getElementById("searchBox");
     search = document.getElementById("search");
     navSearchBox = document.getElementById("navSearchBox");
+    clearSearch = document.getElementById("clearSearch");
+    clearNavSearch = document.getElementById("clearNavSearch");
     generate = document.getElementById("generate");
     select = document.getElementById("select");
     selectShown = document.getElementById("selectShown");
@@ -59,6 +63,8 @@ function init() {
     });
     searchBox.addEventListener("keyup", searchMeetups);
     navSearchBox.addEventListener("keyup", searchMeetups);
+    clearSearch.addEventListener("click", clearMeetupSearch);
+    clearNavSearch.addEventListener("click", clearMeetupSearch);
     
     select.addEventListener("click", selectAllShown);
     selectShown.addEventListener("click", selectOnlyAllShown);
@@ -176,7 +182,7 @@ function searchMeetups() {
 }
 
 function showAllMeetups() {
-    var group = getElementsByClassName("group");
+    var group = document.getElementsByClassName("group");
     for (var i = 0; i < group.length; i++) {
         group[i].style.display = "inline-block";
     }
@@ -330,6 +336,12 @@ $(window).scroll(function () {
         $('#navSearch').addClass('navSearchHide');
     }
 });
+
+function clearMeetupSearch() {
+    searchBox.value = "";
+    navSearchBox.value = "";
+    showAllMeetups();
+}
 
 function setupButtons() {
     all = document.getElementById("all");

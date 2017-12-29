@@ -51,7 +51,7 @@ a {
 }
 
 #searchBox {
-    width: 200px;
+    width: 170px;
 }
 
 .search p {
@@ -223,12 +223,12 @@ label {
 
 #navSearch {
     width: 90%;
+    max-width: 300px;
+    margin: 0px auto 10px auto;
 }
 
 #navSearchBox {
-    width: 90%;
-    max-width: 300px;
-    margin: 0px auto 10px auto;
+    width: 65%;
 }
 
 .navSearchHide {
