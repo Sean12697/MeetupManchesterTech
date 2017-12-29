@@ -225,7 +225,7 @@ label {
     top: 0;
     z-index: 100;
     position: fixed;
-    width: 85%;
+    width: 86%;
 }
 
 #navbar {
@@ -255,7 +255,8 @@ label {
 .nav li {
     padding: 3px 0px;
     display: inline-block;
-    width: 32%;
+    width: 28%;
+    text-align: center;
     -webkit-transition-duration: 0.4s;
     transition-duration: 0.4s;
 }
