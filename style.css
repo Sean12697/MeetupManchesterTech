@@ -228,7 +228,7 @@ label {
 #navSearchBox {
     width: 90%;
     max-width: 300px;
-    margin: 10px auto;
+    margin: 0px auto 10px auto;
 }
 
 .navSearchHide {
