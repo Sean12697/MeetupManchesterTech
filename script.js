@@ -155,7 +155,7 @@ function drawCalendar(JSON, t) {
             var venueAddress = (x.hasOwnProperty('venue')) ? x.venue.address_1 : "";
             var venuePostcode = (x.hasOwnProperty('venue')) ? x.venue.city : "";
 
-            var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeConvert(time) + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '"><p>' + groupName + '</p></a></div>';
+            var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeConvert(time) + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
 
             if (month != date.substring(5, 7)) {
                 month = date.substring(5, 7);
