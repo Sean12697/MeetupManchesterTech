@@ -295,7 +295,7 @@ label {
     height: 100%;
 }
 
-@media all (max-width: 324px) {
+@media only screen and (max-width: 324px) {
     .group {
         width: 40%;
         height: 240px;
@@ -306,7 +306,7 @@ label {
     }
 }
 
-@media all (min-width: 324px), (max-width: 480px) {
+@media only screen and (min-width: 324px) and (max-width: 480px) {
     .group {
         width: 100%;
         height: 100px;
@@ -348,7 +348,7 @@ label {
     }
 }
 
-@media all (min-width: 324px), (max-width: 600px) {
+@media only screen and (min-width: 290px) and (max-width: 600px) {
     .event {
         margin: 10px 0px;
         padding-top: 5px;
@@ -375,10 +375,10 @@ label {
     }
     .event .details {
         text-align: left;
-        width: 70%;
+        width: 60%;
     }
     .event .details p {
-        margin: 4px;
+        margin: 4px 0px;
         height: 30px;
         overflow: hidden;
     }

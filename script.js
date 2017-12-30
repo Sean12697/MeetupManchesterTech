@@ -134,13 +134,12 @@ function drawCalendar(JSON, t) {
     var month = '00';
     for (var i = 0; i < JSON.length; i++) {
         var x = JSON[i];
-        var desc = x.description.replace(/<(?:.|\n)*?>/gm, '').toUpperCase();
+        var desc = (x.hasOwnProperty('description')) ? x.description.replace(/<(?:.|\n)*?>/gm, '').toUpperCase() : ""; // Because some Meetups do not have desc, founded and stopped rendering for "NSManchester: iOS Developer Group" due to error
         var name = x.name.toUpperCase();
 
         if (desc.includes(t) || name.includes(t)) {
 
             var eventName = x.name;
-            var eventDesc = x.description.replace(/<(?:.|\n)*?>/gm, '')
             var eventLink = x.link;
             var groupName = x.group.name;
             var groupLink = "https://www.meetup.com/" + x.group.urlname + "/";
