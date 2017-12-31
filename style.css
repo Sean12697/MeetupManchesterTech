@@ -368,10 +368,11 @@ label {
         padding: 0px;
         margin: 5px;
         margin-right: 0px;
+        width: 60px;
     }
     .event .numbers {
         text-align: center;
-        padding-top: 25px;
+        padding: 25px 0px;
     }
     .event .details {
         text-align: left;

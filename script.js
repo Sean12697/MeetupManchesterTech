@@ -43,36 +43,7 @@ function init() {
     meetups.sort(function (a, b) {
         return a.toLowerCase().localeCompare(b.toLowerCase())
     });
-    searchBox = document.getElementById("searchBox");
-    search = document.getElementById("search");
-    navSearchBox = document.getElementById("navSearchBox");
-    clearSearch = document.getElementById("clearSearch");
-    clearNavSearch = document.getElementById("clearNavSearch");
-    generate = document.getElementById("generate");
-    select = document.getElementById("select");
-    selectShown = document.getElementById("selectShown");
-    deselect = document.getElementById("deselect");
-    invertSelect = document.getElementById("invertSelect");
-    groupsContainer = document.getElementById("groupsContainer");
-    eventsContainer = document.getElementById("eventsContainer");
-    eventSearch = document.getElementById("eventSearch");
-    searchEvents = document.getElementById("searchEvents");
-
-    generate.addEventListener("click", function () {
-        generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()), "");
-    });
-    searchBox.addEventListener("keyup", searchMeetups);
-    navSearchBox.addEventListener("keyup", searchMeetups);
-    clearSearch.addEventListener("click", clearMeetupSearch);
-    clearNavSearch.addEventListener("click", clearMeetupSearch);
-    
-    select.addEventListener("click", selectAllShown);
-    selectShown.addEventListener("click", selectOnlyAllShown);
-    deselect.addEventListener("click", deselectAllShown);
-    invertSelect.addEventListener("click", invertSelection);
-    
-    searchEvents.addEventListener("click", searchEventsFor);
-
+    initDOMelements();
     initGetMeetups();
 }
 
@@ -138,6 +109,7 @@ function drawCalendar(JSON, t) {
         var name = x.name.toUpperCase();
 
         if (desc.includes(t) || name.includes(t)) {
+            var timeRange = "N/A";
 
             var eventName = x.name;
             var eventLink = x.link;
@@ -147,6 +119,7 @@ function drawCalendar(JSON, t) {
             var day = date.substring(8, 10);
             var year = date.substring(0, 4);
             var time = (x.hasOwnProperty('local_time')) ? x.local_time : "N/A";
+            var duration = (x.hasOwnProperty('duration')) ? x.duration : "";
             var rsvp = x.yes_rsvp_count;
             var rsvpLimit = (x.hasOwnProperty('rsvp_limit')) ? x.rsvp_limit : "∞";
 
@@ -154,7 +127,19 @@ function drawCalendar(JSON, t) {
             var venueAddress = (x.hasOwnProperty('venue')) ? x.venue.address_1 : "";
             var venuePostcode = (x.hasOwnProperty('venue')) ? x.venue.city : "";
 
-            var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeConvert(time) + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
+            if (time != "N/A" && duration != "") {
+                var timeC = timeConvert(time);
+                var until = timeConvert(timeUntil(time, duration));
+                if ((timeC.includes("PM") && until.includes("PM")) || (timeC.includes("AM") && until.includes("AM"))) {
+                    timeRange = timeC.replace("AM", "").replace("PM", "") + " - " + until;
+                } else {
+                    timeRange = timeC + " - " + until;
+                }
+            } else {
+                timeRange = timeConvert(time);
+            }
+
+            var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
 
             if (month != date.substring(5, 7)) {
                 month = date.substring(5, 7);
@@ -324,6 +309,30 @@ function timeConvert(i) {
     return x;
 }
 
+function timeUntil(time, duration) {
+    var until;
+    var totalMinutesDuration = Math.floor(duration / 60000);
+
+    var hoursDuration = Math.floor(totalMinutesDuration / 60);
+    var minutesDuration = totalMinutesDuration % 60;
+
+    var hours = parseInt(time.substring(0, 2)) + hoursDuration;
+    var minutes = parseInt(time.substring(3, 5)) + minutesDuration;
+
+    if (minutes > 59) {
+        var h = Math.floor(minutes / 60);
+        minutes -= h * 60;
+        hours += h;
+    }
+    if (hours > 23) {
+        hours -= 24;
+    }
+    if (minutes < 10) {
+        minutes = "0" + minutes;
+    }
+    return hours + ":" + minutes;
+}
+
 $(window).scroll(function () {
     if ($(window).scrollTop() > 460) {
         $('#navbar').addClass('navbarFixed');
@@ -406,4 +415,36 @@ function setupButtons() {
     method.addEventListener("click", function () {
         showEvents(methodIndex);
     });
+}
+
+function initDOMelements() {
+    searchBox = document.getElementById("searchBox");
+    search = document.getElementById("search");
+    navSearchBox = document.getElementById("navSearchBox");
+    clearSearch = document.getElementById("clearSearch");
+    clearNavSearch = document.getElementById("clearNavSearch");
+    generate = document.getElementById("generate");
+    select = document.getElementById("select");
+    selectShown = document.getElementById("selectShown");
+    deselect = document.getElementById("deselect");
+    invertSelect = document.getElementById("invertSelect");
+    groupsContainer = document.getElementById("groupsContainer");
+    eventsContainer = document.getElementById("eventsContainer");
+    eventSearch = document.getElementById("eventSearch");
+    searchEvents = document.getElementById("searchEvents");
+
+    generate.addEventListener("click", function () {
+        generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()), "");
+    });
+    searchBox.addEventListener("keyup", searchMeetups);
+    navSearchBox.addEventListener("keyup", searchMeetups);
+    clearSearch.addEventListener("click", clearMeetupSearch);
+    clearNavSearch.addEventListener("click", clearMeetupSearch);
+
+    select.addEventListener("click", selectAllShown);
+    selectShown.addEventListener("click", selectOnlyAllShown);
+    deselect.addEventListener("click", deselectAllShown);
+    invertSelect.addEventListener("click", invertSelection);
+
+    searchEvents.addEventListener("click", searchEventsFor);
 }
