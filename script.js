@@ -515,7 +515,6 @@ function initDOMelements() {
     eventSearch = document.getElementById("eventSearch");
     searchEvents = document.getElementById("searchEvents");
     techNW = document.getElementById("techNW");
-    generateAll = document.getElementById("generateAll");
 
     generate.addEventListener("click", function () {
         generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()), "");
@@ -534,7 +533,5 @@ function initDOMelements() {
     techNW.addEventListener("click", function () {
         getTechNW(false, "");
     });
-    generateAll.addEventListener("click", function () {
-        getTechNW(true, "");
-    });
+
 }
