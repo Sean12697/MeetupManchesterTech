@@ -291,30 +291,32 @@ function removeDuplicates(JSON) {
         var x = JSON[i];
 
         if (JSON[i] != null) {
-        var xDay = (x.hasOwnProperty('start')) ? x.start.dateTime.substr(8, 2) : x.local_date.substr(8, 2);
+            var xDay = (x.hasOwnProperty('start')) ? x.start.dateTime.substr(8, 2) : x.local_date.substr(8, 2);
 
-        var xMonth = (x.hasOwnProperty('start')) ? new Date(x.start.dateTime).getMonth() + 1 : parseInt(x.local_date.substring(5, 7));
+            var xMonth = (x.hasOwnProperty('start')) ? new Date(x.start.dateTime).getMonth() + 1 : parseInt(x.local_date.substring(5, 7));
 
-        for (var j = i + 1; j < JSON.length && JSON[j] != null && xDay == ((JSON[j].hasOwnProperty('start')) ? JSON[j].start.dateTime.substr(8, 2) : JSON[j].local_date.substr(8, 2)); j++) {
+            for (var j = i + 1; j < JSON.length && JSON[j] != null && xDay == ((JSON[j].hasOwnProperty('start')) ? JSON[j].start.dateTime.substr(8, 2) : JSON[j].local_date.substr(8, 2)); j++) {
 
-            var y = JSON[j];
+                var y = JSON[j];
 
-            // check for same type
-            if (i != j && containsWords(x, y)) {
-                if (!((x.hasOwnProperty('start') && y.hasOwnProperty('start')) || (x.hasOwnProperty('name') && y.hasOwnProperty('name')))) {
-                if (x.hasOwnProperty('start')) {
-                    JSON[i] = null;
-                    } else {
-                    JSON[j] = null;
+                // check for same type
+                if (i != j && containsWords(x, y)) {
+                    if (!((x.hasOwnProperty('start') && y.hasOwnProperty('start')) || (x.hasOwnProperty('name') && y.hasOwnProperty('name')))) {
+                        if (x.hasOwnProperty('start')) {
+                            JSON[i] = null;
+                        } else {
+                            JSON[j] = null;
+                        }
                     }
-            }
-            }
+                }
 
+            }
         }
     }
-    } 
     console.log(JSON);
-    newJSON = JSON.filter(function (n) { return n !== null });
+    newJSON = JSON.filter(function (n) {
+        return n !== null
+    });
     console.log(JSON);
     return newJSON;
 }
@@ -330,7 +332,6 @@ function containsWords(x, y) {
     for (var i = 0; i < xWords.length; i++) {
         for (var j = 0; j < yWords.length; j++) {
             if (xWords[i] == yWords[j]) {
-                // console.log(xName + " " + yName);
                 return true;
             }
         }
@@ -408,8 +409,6 @@ function drawTechNWEvent(x) {
     var day = date.substr(8, 2);
     var month = new Date(date).getMonth() + 1;
     var year = '20' + (new Date(date).getYear()).toString().substring(1, 3);
-    //var year = new Date(date).getYear();
-    //year = '20' + year.toString().substring(1, 3);
     var h = (new Date(date).getHours() > 9) ? new Date(date).getHours() : '0' + new Date(date).getHours();
     var m = (new Date(date).getMinutes() > 9) ? new Date(date).getMinutes() : '0' + new Date(date).getMinutes();
     var time = h + ":" + m;
@@ -648,88 +647,3 @@ function initDOMelements() {
     });
 
 }
-
-
-/* ONLY FOR CALENDAR EVENTS
-function drawTechNW(JSON) {
-    document.getElementById("eventsContainer").innerHTML = "";
-    var m = 0;
-    for (var i = 0; i < JSON.length; i++) {
-        var x = JSON[i];
-        // console.log(x);
-        var name = x.summary;
-        var date = x.start.dateTime;
-        var day = date.substr(8, 2);
-        var month = new Date(date).getMonth() + 1;
-        var year = new Date(date).getYear();
-        year = '20' + year.toString().substring(1, 3);
-        var h = (new Date(date).getHours() > 9) ? new Date(date).getHours() : '0' + new Date(date).getHours();
-        var min = (new Date(date).getMinutes() > 9) ? new Date(date).getMinutes() : '0' + new Date(date).getMinutes();
-        var time = h + ":" + min;
-        var location = (x.hasOwnProperty('location')) ? x.location : "N/A";
-        var link = x.htmlLink;
-
-        var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p>' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
-
-        if (m != month) {
-            m = month;
-            eventsContainer.insertAdjacentHTML('beforeend', '<h3 class="month">' + months.get(month) + ' (' + year + ')' + '</h3>')
-        }
-
-        eventsContainer.insertAdjacentHTML('beforeend', event);
-    }
-}
-*/
-
-/* OLD ONLY FOR MEETUP JSON
-function drawCalendar(JSON, t) {
-    eventsContainer.innerHTML = "";
-    var month = 0;
-    for (var i = 0; i < JSON.length; i++) {
-        var x = JSON[i];
-        var desc = (x.hasOwnProperty('description')) ? x.description.replace(/<(?:.|\n)*?>/gm, '').toUpperCase() : ""; // Because some Meetups do not have desc, founded and stopped rendering for "NSManchester: iOS Developer Group" due to error
-        var name = x.name.toUpperCase();
-
-        if (desc.includes(t) || name.includes(t)) {
-            var timeRange = "N/A";
-
-            var eventName = x.name;
-            var eventLink = x.link;
-            var groupName = x.group.name;
-            var groupLink = "https://www.meetup.com/" + x.group.urlname + "/";
-            var date = x.local_date;
-            var day = date.substring(8, 10);
-            var year = date.substring(0, 4);
-            var time = (x.hasOwnProperty('local_time')) ? x.local_time : "N/A";
-            var duration = (x.hasOwnProperty('duration')) ? x.duration : "";
-            var rsvp = x.yes_rsvp_count;
-            var rsvpLimit = (x.hasOwnProperty('rsvp_limit')) ? x.rsvp_limit : "∞";
-
-            var venueName = (x.hasOwnProperty('venue')) ? x.venue.name : "N/A";
-            var venueAddress = (x.hasOwnProperty('venue')) ? x.venue.address_1 : "";
-            var venuePostcode = (x.hasOwnProperty('venue')) ? x.venue.city : "";
-
-            if (time != "N/A" && duration != "") {
-                var timeC = timeConvert(time);
-                var until = timeConvert(timeUntil(time, duration));
-                if ((timeC.includes("PM") && until.includes("PM")) || (timeC.includes("AM") && until.includes("AM"))) {
-                    timeRange = timeC.replace("AM", "").replace("PM", "") + " - " + until;
-                } else {
-                    timeRange = timeC + " - " + until;
-                }
-            } else {
-                timeRange = timeConvert(time);
-            }
-
-            var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
-
-            if (month != parseInt(date.substring(5, 7))) {
-                month = parseInt(date.substring(5, 7));
-                eventsContainer.insertAdjacentHTML('beforeend', '<h3 class="month">' + months.get(parseInt(month)) + ' (' + year + ')' + '</h3>')
-            }
-
-            eventsContainer.insertAdjacentHTML('beforeend', event);
-        }
-    }
-}
-*/
