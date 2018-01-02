@@ -244,7 +244,7 @@ app.getMeetups = (meetup) => $.ajax({
     dataType: 'jsonp'
 });
 
-function getTechNW(merge, t) {
+function getTechNW(merge, t) {eventsContainer.insertAdjacentHTML('beforeend', '<div class="loader"></div>');
     var r = new XMLHttpRequest();
 
     r.open('GET', 'https://www.googleapis.com/calendar/v3/calendars/a73q3trj8bssqjifgolb1q8fr4@group.calendar.google.com/events?key=AIzaSyCR3-ptjHE-_douJsn8o20oRwkxt-zHStY&maxResults=9999&singleEvents=true&orderBy=starttime', true);
@@ -515,6 +515,7 @@ function initDOMelements() {
     eventSearch = document.getElementById("eventSearch");
     searchEvents = document.getElementById("searchEvents");
     techNW = document.getElementById("techNW");
+    //generateAll = document.getElementById("generateAll");
 
     generate.addEventListener("click", function () {
         generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()), "");
@@ -533,5 +534,8 @@ function initDOMelements() {
     techNW.addEventListener("click", function () {
         getTechNW(false, "");
     });
+    //generateAll.addEventListener("click", function () {
+    //    getTechNW(true, "");
+    //});
 
 }
