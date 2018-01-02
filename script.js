@@ -286,6 +286,7 @@ function generateAllEvents(techNWMeetups) {
 }
 
 function drawTechNW(JSON) {
+    document.getElementById("eventsContainer").innerHTML = "";
     var m = 0;
     for (var i = 0; i < JSON.length; i++) {
         var x = JSON[i];
