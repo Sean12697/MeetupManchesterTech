@@ -78,7 +78,7 @@ function initGetMeetups() {
 }
 
 function searchEventsFor() {
-    generateCalendar(meetups, eventSearch.value.toUpperCase());
+    getTechNW(true, eventSearch.value.toUpperCase());
 }
 
 // t = term
@@ -100,58 +100,6 @@ function generateCalendar(x, t) {
             console.log(eventsJSON);
             drawCalendar(eventsJSON, t);
         });
-}
-
-
-function drawCalendar(JSON, t) {
-    eventsContainer.innerHTML = "";
-    var month = 0;
-    for (var i = 0; i < JSON.length; i++) {
-        var x = JSON[i];
-        var desc = (x.hasOwnProperty('description')) ? x.description.replace(/<(?:.|\n)*?>/gm, '').toUpperCase() : ""; // Because some Meetups do not have desc, founded and stopped rendering for "NSManchester: iOS Developer Group" due to error
-        var name = x.name.toUpperCase();
-
-        if (desc.includes(t) || name.includes(t)) {
-            var timeRange = "N/A";
-
-            var eventName = x.name;
-            var eventLink = x.link;
-            var groupName = x.group.name;
-            var groupLink = "https://www.meetup.com/" + x.group.urlname + "/";
-            var date = x.local_date;
-            var day = date.substring(8, 10);
-            var year = date.substring(0, 4);
-            var time = (x.hasOwnProperty('local_time')) ? x.local_time : "N/A";
-            var duration = (x.hasOwnProperty('duration')) ? x.duration : "";
-            var rsvp = x.yes_rsvp_count;
-            var rsvpLimit = (x.hasOwnProperty('rsvp_limit')) ? x.rsvp_limit : "∞";
-
-            var venueName = (x.hasOwnProperty('venue')) ? x.venue.name : "N/A";
-            var venueAddress = (x.hasOwnProperty('venue')) ? x.venue.address_1 : "";
-            var venuePostcode = (x.hasOwnProperty('venue')) ? x.venue.city : "";
-
-            if (time != "N/A" && duration != "") {
-                var timeC = timeConvert(time);
-                var until = timeConvert(timeUntil(time, duration));
-                if ((timeC.includes("PM") && until.includes("PM")) || (timeC.includes("AM") && until.includes("AM"))) {
-                    timeRange = timeC.replace("AM", "").replace("PM", "") + " - " + until;
-                } else {
-                    timeRange = timeC + " - " + until;
-                }
-            } else {
-                timeRange = timeConvert(time);
-            }
-
-            var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
-
-            if (month != parseInt(date.substring(5, 7))) {
-                month = parseInt(date.substring(5, 7));
-                eventsContainer.insertAdjacentHTML('beforeend', '<h3 class="month">' + months.get(parseInt(month)) + ' (' + year + ')' + '</h3>')
-            }
-
-            eventsContainer.insertAdjacentHTML('beforeend', event);
-        }
-    }
 }
 
 function searchMeetups() {
@@ -272,8 +220,8 @@ function getTechNW(merge, t) {
             return new Date(a.start.dateTime).getTime() - new Date(b.start.dateTime).getTime();
         });
 
-        if (merge) generateAllEvents(futureEvents);
-        if (!merge) drawTechNW(futureEvents);
+        if (merge) generateAllEvents(futureEvents, t);
+        if (!merge) drawCalendar(futureEvents, t);
 
         console.log(futureEvents);
     }
@@ -281,43 +229,137 @@ function getTechNW(merge, t) {
     r.send();
 }
 
-function generateAllEvents(techNWMeetups) {
+function generateAllEvents(techNWMeetups, t) {
+    eventsJSON = meetups;
+    eventsJSON = eventsJSON.map(app.getEvents);
+
+    $.when(...eventsJSON)
+        .then((...eventsJSON) => {
+            if (gSelected > 1) {
+                eventsJSON = eventsJSON.map(a => a[0].data)
+                    .reduce((prev, curr) => [...prev, ...curr], [])
+                    .sort(function (a, b) {
+                        return a.time - b.time;
+                    });
+            } else {
+                eventsJSON = eventsJSON.map(a => a.data)[0];
+            }
+
+            console.log(eventsJSON);
+            var e = mergeMeetupTechNW(eventsJSON, techNWMeetups);
+            e = sortMeetups(e);
+            console.log(e);
+            drawCalendar(e, t);
+        });
+}
+
+
+function mergeMeetupTechNW(Meetup, TechNW) {
+    return Meetup.concat(TechNW);
+}
+
+function sortMeetups(JSON) {
+    return JSON.sort(function (a, b) {
+        if (a.hasOwnProperty('start') && b.hasOwnProperty('start')) return new Date(a.start.dateTime).getTime() - new Date(b.start.dateTime).getTime();
+        if (a.hasOwnProperty('start') && b.hasOwnProperty('time')) return new Date(a.start.dateTime).getTime() - b.time;
+        if (a.hasOwnProperty('time') && b.hasOwnProperty('start')) return a.time - new Date(b.start.dateTime).getTime();
+        if (a.hasOwnProperty('time') && b.hasOwnProperty('time')) return a.time - b.time;
+    });
+}
+
+function removeDuplicates(JSON) {
     
 }
 
-function drawTechNW(JSON) {
+function drawCalendar(JSON, t) {
     document.getElementById("eventsContainer").innerHTML = "";
     var m = 0;
+    var j = [];
     for (var i = 0; i < JSON.length; i++) {
         var x = JSON[i];
-        // console.log(x);
-        var name = x.summary;
-        var date = x.start.dateTime;
-        var day = date.substr(8, 2);
-        var month = new Date(date).getMonth() + 1;
-        var year = new Date(date).getYear();
-        year = '20' + year.toString().substring(1, 3);
-        var h = (new Date(date).getHours() > 9) ? new Date(date).getHours() : '0' + new Date(date).getHours();
-        var min = (new Date(date).getMinutes() > 9) ? new Date(date).getMinutes() : '0' + new Date(date).getMinutes();
-        var time = h + ":" + min;
-        var location = (x.hasOwnProperty('location')) ? x.location : "N/A";
-        var link = x.htmlLink;
 
-        var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p>' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
+        var desc = (x.hasOwnProperty('description')) ? x.description.replace(/<(?:.|\n)*?>/gm, '').toUpperCase() : "";
+        var name = (x.hasOwnProperty('name')) ? x.name.toUpperCase() : x.summary.toUpperCase();
 
-        if (m != month) {
+        if (desc.includes(t) || name.includes(t)) {
+
+            var month = (x.hasOwnProperty('start')) ? new Date(x.start.dateTime).getMonth() + 1 : parseInt(x.local_date.substring(5, 7));
+            
+            var year = (x.hasOwnProperty('start')) ? '20' + (new Date(x.start.dateTime).getYear()).toString().substring(1, 3) : parseInt(x.local_date.substring(0, 4));
+            
+            if (m != month) {
                 m = month;
                 eventsContainer.insertAdjacentHTML('beforeend', '<h3 class="month">' + months.get(month) + ' (' + year + ')' + '</h3>')
             }
-        
-        eventsContainer.insertAdjacentHTML('beforeend', event);
+
+            if (x.hasOwnProperty('name')) {
+                drawMeetupEvent(x);
+            } else {
+                drawTechNWEvent(x);
+            }
+            
+            j.push(x);
+        }
+    } console.log(j);
+}
+
+function drawMeetupEvent(x) {
+    var eventName = x.name;
+    var eventLink = x.link;
+    var groupName = x.group.name;
+    var groupLink = "https://www.meetup.com/" + x.group.urlname + "/";
+    var date = x.local_date;
+    var day = date.substring(8, 10);
+    var year = date.substring(0, 4);
+    var time = (x.hasOwnProperty('local_time')) ? x.local_time : "N/A";
+    var duration = (x.hasOwnProperty('duration')) ? x.duration : "";
+    var rsvp = x.yes_rsvp_count;
+    var rsvpLimit = (x.hasOwnProperty('rsvp_limit')) ? x.rsvp_limit : "∞";
+
+    var venueName = (x.hasOwnProperty('venue')) ? x.venue.name : "N/A";
+    var venueAddress = (x.hasOwnProperty('venue')) ? x.venue.address_1 : "";
+    var venuePostcode = (x.hasOwnProperty('venue')) ? x.venue.city : "";
+
+    if (time != "N/A" && duration != "") {
+        var timeC = timeConvert(time);
+        var until = timeConvert(timeUntil(time, duration));
+        if ((timeC.includes("PM") && until.includes("PM")) || (timeC.includes("AM") && until.includes("AM"))) {
+            timeRange = timeC.replace("AM", "").replace("PM", "") + " - " + until;
+        } else {
+            timeRange = timeC + " - " + until;
+        }
+    } else {
+        timeRange = timeConvert(time);
     }
+
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
+
+    eventsContainer.insertAdjacentHTML('beforeend', event);
+}
+
+function drawTechNWEvent(x) {
+    var name = x.summary;
+    var date = x.start.dateTime;
+    var day = date.substr(8, 2);
+    var month = new Date(date).getMonth() + 1;
+    var year = '20' + (new Date(date).getYear()).toString().substring(1, 3);
+    //var year = new Date(date).getYear();
+    //year = '20' + year.toString().substring(1, 3);
+    var h = (new Date(date).getHours() > 9) ? new Date(date).getHours() : '0' + new Date(date).getHours();
+    var m = (new Date(date).getMinutes() > 9) ? new Date(date).getMinutes() : '0' + new Date(date).getMinutes();
+    var time = h + ":" + m;
+    var location = (x.hasOwnProperty('location')) ? x.location : "N/A";
+    var link = x.htmlLink;
+
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p>' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
+
+    eventsContainer.insertAdjacentHTML('beforeend', event);
 }
 
 function pastEvent(date) {
     var compareDate = new Date(date);
     var now = new Date();
-    
+
     if (now.getTime() > compareDate.getTime()) {
         return true;
     }
@@ -517,7 +559,7 @@ function initDOMelements() {
     eventSearch = document.getElementById("eventSearch");
     searchEvents = document.getElementById("searchEvents");
     techNW = document.getElementById("techNW");
-    //generateAll = document.getElementById("generateAll");
+    generateAll = document.getElementById("generateAll");
 
     generate.addEventListener("click", function () {
         generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()), "");
@@ -536,8 +578,93 @@ function initDOMelements() {
     techNW.addEventListener("click", function () {
         getTechNW(false, "");
     });
-    //generateAll.addEventListener("click", function () {
-    //    getTechNW(true, "");
-    //});
+    generateAll.addEventListener("click", function () {
+        getTechNW(true, "");
+    });
 
 }
+
+
+/* ONLY FOR CALENDAR EVENTS
+function drawTechNW(JSON) {
+    document.getElementById("eventsContainer").innerHTML = "";
+    var m = 0;
+    for (var i = 0; i < JSON.length; i++) {
+        var x = JSON[i];
+        // console.log(x);
+        var name = x.summary;
+        var date = x.start.dateTime;
+        var day = date.substr(8, 2);
+        var month = new Date(date).getMonth() + 1;
+        var year = new Date(date).getYear();
+        year = '20' + year.toString().substring(1, 3);
+        var h = (new Date(date).getHours() > 9) ? new Date(date).getHours() : '0' + new Date(date).getHours();
+        var min = (new Date(date).getMinutes() > 9) ? new Date(date).getMinutes() : '0' + new Date(date).getMinutes();
+        var time = h + ":" + min;
+        var location = (x.hasOwnProperty('location')) ? x.location : "N/A";
+        var link = x.htmlLink;
+
+        var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p>' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
+
+        if (m != month) {
+            m = month;
+            eventsContainer.insertAdjacentHTML('beforeend', '<h3 class="month">' + months.get(month) + ' (' + year + ')' + '</h3>')
+        }
+
+        eventsContainer.insertAdjacentHTML('beforeend', event);
+    }
+}
+*/
+
+/* OLD ONLY FOR MEETUP JSON
+function drawCalendar(JSON, t) {
+    eventsContainer.innerHTML = "";
+    var month = 0;
+    for (var i = 0; i < JSON.length; i++) {
+        var x = JSON[i];
+        var desc = (x.hasOwnProperty('description')) ? x.description.replace(/<(?:.|\n)*?>/gm, '').toUpperCase() : ""; // Because some Meetups do not have desc, founded and stopped rendering for "NSManchester: iOS Developer Group" due to error
+        var name = x.name.toUpperCase();
+
+        if (desc.includes(t) || name.includes(t)) {
+            var timeRange = "N/A";
+
+            var eventName = x.name;
+            var eventLink = x.link;
+            var groupName = x.group.name;
+            var groupLink = "https://www.meetup.com/" + x.group.urlname + "/";
+            var date = x.local_date;
+            var day = date.substring(8, 10);
+            var year = date.substring(0, 4);
+            var time = (x.hasOwnProperty('local_time')) ? x.local_time : "N/A";
+            var duration = (x.hasOwnProperty('duration')) ? x.duration : "";
+            var rsvp = x.yes_rsvp_count;
+            var rsvpLimit = (x.hasOwnProperty('rsvp_limit')) ? x.rsvp_limit : "∞";
+
+            var venueName = (x.hasOwnProperty('venue')) ? x.venue.name : "N/A";
+            var venueAddress = (x.hasOwnProperty('venue')) ? x.venue.address_1 : "";
+            var venuePostcode = (x.hasOwnProperty('venue')) ? x.venue.city : "";
+
+            if (time != "N/A" && duration != "") {
+                var timeC = timeConvert(time);
+                var until = timeConvert(timeUntil(time, duration));
+                if ((timeC.includes("PM") && until.includes("PM")) || (timeC.includes("AM") && until.includes("AM"))) {
+                    timeRange = timeC.replace("AM", "").replace("PM", "") + " - " + until;
+                } else {
+                    timeRange = timeC + " - " + until;
+                }
+            } else {
+                timeRange = timeConvert(time);
+            }
+
+            var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
+
+            if (month != parseInt(date.substring(5, 7))) {
+                month = parseInt(date.substring(5, 7));
+                eventsContainer.insertAdjacentHTML('beforeend', '<h3 class="month">' + months.get(parseInt(month)) + ' (' + year + ')' + '</h3>')
+            }
+
+            eventsContainer.insertAdjacentHTML('beforeend', event);
+        }
+    }
+}
+*/
