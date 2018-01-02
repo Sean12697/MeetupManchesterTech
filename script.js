@@ -248,6 +248,8 @@ function generateAllEvents(techNWMeetups, t) {
             console.log(eventsJSON);
             var e = mergeMeetupTechNW(eventsJSON, techNWMeetups);
             e = sortMeetups(e);
+            e = reduceFromTerm(e, t);
+            e = removeDuplicates(e);
             console.log(e);
             drawCalendar(e, t);
         });
@@ -267,14 +269,79 @@ function sortMeetups(JSON) {
     });
 }
 
+function reduceFromTerm(JSON, t) {
+    var j = [];
+    for (var i = 0; i < JSON.length; i++) {
+        var x = JSON[i];
+
+        var desc = (x.hasOwnProperty('description')) ? x.description.replace(/<(?:.|\n)*?>/gm, '').toUpperCase() : "";
+        var name = (x.hasOwnProperty('name')) ? x.name.toUpperCase() : x.summary.toUpperCase();
+
+        if (desc.includes(t) || name.includes(t)) {
+            j.push(x);
+        }
+    }
+    console.log(j);
+    return j;
+}
+
 function removeDuplicates(JSON) {
-    
+    var newJSON = [];
+    for (var i = 0; i < JSON.length; i++) {
+        var x = JSON[i];
+
+        if (JSON[i] != null) {
+        var xDay = (x.hasOwnProperty('start')) ? x.start.dateTime.substr(8, 2) : x.local_date.substr(8, 2);
+
+        var xMonth = (x.hasOwnProperty('start')) ? new Date(x.start.dateTime).getMonth() + 1 : parseInt(x.local_date.substring(5, 7));
+
+        for (var j = i + 1; j < JSON.length && JSON[j] != null && xDay == ((JSON[j].hasOwnProperty('start')) ? JSON[j].start.dateTime.substr(8, 2) : JSON[j].local_date.substr(8, 2)); j++) {
+
+            var y = JSON[j];
+
+            // check for same type
+            if (i != j && containsWords(x, y)) {
+                if (!((x.hasOwnProperty('start') && y.hasOwnProperty('start')) || (x.hasOwnProperty('name') && y.hasOwnProperty('name')))) {
+                if (x.hasOwnProperty('start')) {
+                    JSON[i] = null;
+                    } else {
+                    JSON[j] = null;
+                    }
+            }
+            }
+
+        }
+    }
+    } 
+    console.log(JSON);
+    newJSON = JSON.filter(function (n) { return n !== null });
+    console.log(JSON);
+    return newJSON;
+}
+
+function containsWords(x, y) {
+
+    var xName = (x.hasOwnProperty('name')) ? x.name.toUpperCase() : x.summary.toUpperCase();
+    var xWords = xName.split(" ");
+
+    var yName = (y.hasOwnProperty('name')) ? y.name.toUpperCase() : y.summary.toUpperCase();
+    var yWords = yName.split(" ");
+
+    for (var i = 0; i < xWords.length; i++) {
+        for (var j = 0; j < yWords.length; j++) {
+            if (xWords[i] == yWords[j]) {
+                // console.log(xName + " " + yName);
+                return true;
+            }
+        }
+    }
+    return false;
+
 }
 
 function drawCalendar(JSON, t) {
     document.getElementById("eventsContainer").innerHTML = "";
     var m = 0;
-    var j = [];
     for (var i = 0; i < JSON.length; i++) {
         var x = JSON[i];
 
@@ -284,9 +351,9 @@ function drawCalendar(JSON, t) {
         if (desc.includes(t) || name.includes(t)) {
 
             var month = (x.hasOwnProperty('start')) ? new Date(x.start.dateTime).getMonth() + 1 : parseInt(x.local_date.substring(5, 7));
-            
+
             var year = (x.hasOwnProperty('start')) ? '20' + (new Date(x.start.dateTime).getYear()).toString().substring(1, 3) : parseInt(x.local_date.substring(0, 4));
-            
+
             if (m != month) {
                 m = month;
                 eventsContainer.insertAdjacentHTML('beforeend', '<h3 class="month">' + months.get(month) + ' (' + year + ')' + '</h3>')
@@ -297,10 +364,8 @@ function drawCalendar(JSON, t) {
             } else {
                 drawTechNWEvent(x);
             }
-            
-            j.push(x);
         }
-    } console.log(j);
+    }
 }
 
 function drawMeetupEvent(x) {
