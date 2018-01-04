@@ -311,25 +311,31 @@ function removeDuplicates(JSON) {
 
                 var y = JSON[j];
 
-                if (i != j && containsWords(x, y)) {
-                    if (!((x.hasOwnProperty('start') && y.hasOwnProperty('start')) || (x.hasOwnProperty('name') && y.hasOwnProperty('name')))) {
-                        
-                        if (x.hasOwnProperty('start')) {
-                            
-                            if (!y.hasOwnProperty('venue') && x.hasOwnProperty('location')) {
-                                var obj = {name: JSON[i].location};
-                                JSON[j].venue = obj;
+                if (x != null && y != null) {
+                    if (i != j && containsWords(x, y)) {
+                        if (!((x.hasOwnProperty('start') && y.hasOwnProperty('start')) || (x.hasOwnProperty('name') && y.hasOwnProperty('name')))) {
+
+                            if (x.hasOwnProperty('start')) {
+
+                                if (!y.hasOwnProperty('venue') && x.hasOwnProperty('location')) {
+                                    var obj = {
+                                        name: JSON[i].location
+                                    };
+                                    JSON[j].venue = obj;
+                                }
+                                JSON[i] = null;
+
+                            } else {
+
+                                if (!x.hasOwnProperty('venue') && y.hasOwnProperty('location')) {
+                                    var obj = {
+                                        name: JSON[j].location
+                                    };
+                                    JSON[i].venue = obj;
+                                }
+                                JSON[j] = null
+
                             }
-                            JSON[i] = null;
-                            
-                        } else {
-                            
-                            if (!x.hasOwnProperty('venue') && y.hasOwnProperty('location')) {
-                                var obj = {name: JSON[j].location};
-                                JSON[i].venue = obj;
-                            }
-                            JSON[j] = null
-                            
                         }
                     }
                 }
@@ -349,14 +355,16 @@ function containsWords(x, y) {
 
     var xName = (x.hasOwnProperty('name')) ? x.name + " " + x.group.name : x.summary;
     var xWords = xName.match(/[A-Z]*[^A-Z]+/g);
+    if (xWords == null) xWords = xName.split(" ");
     xWords.map(function (z) {
-        return z.toUpperCase()
+        return z.toUpperCase().replace(" ", "")
     });
 
     var yName = (y.hasOwnProperty('name')) ? y.name + " " + y.group.name : y.summary;
     var yWords = yName.match(/[A-Z]*[^A-Z]+/g);
+    if (yWords == null) yWords = yName.split(" ");
     yWords.map(function (z) {
-        return z.toUpperCase()
+        return z.toUpperCase().replace(" ", "")
     });
 
     for (var i = 0; i < xWords.length; i++) {
@@ -419,7 +427,7 @@ function drawMeetupEvent(x) {
     var venuePostcode = (x.hasOwnProperty('venue')) ? x.venue.city : "";
     var venue = (venueName == "N/A") ? "N/A" : venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')';
     venue = venue.replace("undefined", "").replace("undefined", "").replace(' - ()', "");
-    
+
     if (time != "N/A" && duration != "") {
         var timeC = timeConvert(time);
         var until = timeConvert(timeUntil(time, duration));
