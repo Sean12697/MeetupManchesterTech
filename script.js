@@ -35,7 +35,8 @@ var generateAll;
 
 let gSelected = 10; // Bodge for one selected meetup group, needs to be more than 1 for search
 
-var meetups = ["android_mcr", "BCS-Greater-Manchester-Branch", "blabtalks", "meetup-group-wHuRVtrk", "CIA-Chicks-in-Advertising-Manchester", "Code-Your-Future-Manchester", "CodeUpManchester", "CodeUp-Salford", "Digital-Analytics-Manchester", "Digital_North_", "DotNetNorth", "Enterprise-UX", "freelance-folk-manchester", "HackerNestMAN", "hackspace-manchester", "HadoopManchester", "HCD-Manchester", "IoTMCR", "JavaScript-North-West", "Ladies-of-Code-Manchester", "Lean-Agile-Manchester", "MaccTech", "Magento-Minds-of-Manchester", "MancDB", "Manchester-Bitcoin-blockchain-and-other-cryptocurrencies", "Manchester-Angular-Workshop", "manchesterentrepreneursclub", "Manchester-Futurists", "Manchester-Grey-Hats", "Manchester-InfoSec", "ManchesterUK-Java-Community", "Power-BI-Manchester-Meetup", "Manchester-R", "Manchester-React-User-Group", "ManchesterWordPressUserGroup", "MancJS", "McrFRED", "McrUXD", "Messaging-Bots-Manchester", "Music-Culture-and-Technology", "Neo4j-Manchester", "North-West-IT-Crowd-Beer-BBQ-Event", "North-West-Ruby-User-Group", "Open-Data-Manchester", "Practical-Business-Workshops-Manchester", "RealUX", "Salford-Lean-Startup", "scala-developers", "SEO-Manchester", "Social-Software-Development-Meetup-in-Manchester", "Tech-for-Good-Live", "Tech-Leads-NW", "Test-Hive-Manchester", "ThoughtWorks-Manchester-Events", "UK-North-Crypto-Currency-Meetup", "The-UX-Crunch-North", "VRManchester", "AWS-User-Group-North", "Code-Nation", "Manchester-Open-Source", "DevOps-Manchester", "StartupBlink-Manchester", "nwdrupal", "Manchester-Xamarin-User-Group", "manchester-node-workshop", "DATA-VISUALISATION-MEETUP", "BlockchainManchesterMeetup", "Manchester-WordPress-SEO-Startup", "Manchester-Unity3D-Game-Dev-Meetup", "Google-Cloud-Platform-Users-North-West", "Manc-Bitcoin", "craftcmsmanchester", "Couchbase-Manchester", "NSManchester", "Python-North-West-Meetup", "Expert-Talks-Manchester", "HER-Data-MCR", "northernsoho", "North-West-Playtesters"]; // wHuRVtrk = Blockchain, 
+const commonWords = ["MANCHESTER", "GROUP", "USER", "-"];
+var meetups = ["android_mcr", "BCS-Greater-Manchester-Branch", "blabtalks", "meetup-group-wHuRVtrk", "CIA-Chicks-in-Advertising-Manchester", "Code-Your-Future-Manchester", "CodeUpManchester", "CodeUp-Salford", "Digital-Analytics-Manchester", "Digital_North_", "DotNetNorth", "Enterprise-UX", "freelance-folk-manchester", "HackerNestMAN", "hackspace-manchester", "HadoopManchester", "HCD-Manchester", "IoTMCR", "JavaScript-North-West", "Ladies-of-Code-Manchester", "Lean-Agile-Manchester", "MaccTech", "Magento-Minds-of-Manchester", "MancDB", "Manchester-Bitcoin-blockchain-and-other-cryptocurrencies", "Manchester-Angular-Workshop", "manchesterentrepreneursclub", "Manchester-Futurists", "Manchester-Grey-Hats", "Manchester-InfoSec", "ManchesterUK-Java-Community", "Power-BI-Manchester-Meetup", "Manchester-R", "Manchester-React-User-Group", "ManchesterWordPressUserGroup", "MancJS", "McrFRED", "McrUXD", "Messaging-Bots-Manchester", "Music-Culture-and-Technology", "Neo4j-Manchester", "North-West-IT-Crowd-Beer-BBQ-Event", "North-West-Ruby-User-Group", "Open-Data-Manchester", "Practical-Business-Workshops-Manchester", "RealUX", "Salford-Lean-Startup", "scala-developers", "SEO-Manchester", "Social-Software-Development-Meetup-in-Manchester", "Tech-for-Good-Live", "Tech-Leads-NW", "Test-Hive-Manchester", "ThoughtWorks-Manchester-Events", "UK-North-Crypto-Currency-Meetup", "The-UX-Crunch-North", "VRManchester", "AWS-User-Group-North", "Code-Nation", "Manchester-Open-Source", "DevOps-Manchester", "StartupBlink-Manchester", "nwdrupal", "Manchester-Xamarin-User-Group", "manchester-node-workshop", "DATA-VISUALISATION-MEETUP", "BlockchainManchesterMeetup", "Manchester-WordPress-SEO-Startup", "Manchester-Unity3D-Game-Dev-Meetup", "Google-Cloud-Platform-Users-North-West", "Manc-Bitcoin", "craftcmsmanchester", "Couchbase-Manchester", "NSManchester", "Python-North-West-Meetup", "Expert-Talks-Manchester", "HER-Data-MCR", "northernsoho", "North-West-Playtesters", "VueJS-Manchester", "North-West-Tester-Gathering", "etechmcr", "Introduction-to-Bitcoin-and-Cryptoeconomics", "Bitcoin-Manchester"]; // wHuRVtrk = Blockchain, 
 
 const months = new Map([[1, 'January'], [2, 'February'], [3, 'March'], [4, 'April'], [5, 'May'], [6, 'June'], [7, 'July'], [8, 'August'], [9, 'September'], [10, 'October'], [11, 'November'], [12, 'December']]);
 
@@ -73,9 +74,9 @@ function initGetMeetups() {
         .then((...MeetupsJSON) => {
             MeetupsJSON = MeetupsJSON.map(a => a[0].data).filter(function (n) {
                 if (n.hasOwnProperty('errors')) {
-                        var name = n.errors[0].message.substr(22, n.errors[0].message.length);
-                        console.log(name + ': Group Error');
-                        errorMeetups.push(name);
+                    var name = n.errors[0].message.substr(22, n.errors[0].message.length);
+                    console.log(name + ': Group Error');
+                    errorMeetups.push(name);
                 }
                 return !n.hasOwnProperty('errors');
             });
@@ -310,13 +311,25 @@ function removeDuplicates(JSON) {
 
                 var y = JSON[j];
 
-                // check for same type
                 if (i != j && containsWords(x, y)) {
                     if (!((x.hasOwnProperty('start') && y.hasOwnProperty('start')) || (x.hasOwnProperty('name') && y.hasOwnProperty('name')))) {
+                        
                         if (x.hasOwnProperty('start')) {
+                            
+                            if (!y.hasOwnProperty('venue') && x.hasOwnProperty('location')) {
+                                var obj = {name: JSON[i].location};
+                                JSON[j].venue = obj;
+                            }
                             JSON[i] = null;
+                            
                         } else {
-                            JSON[j] = null;
+                            
+                            if (!x.hasOwnProperty('venue') && y.hasOwnProperty('location')) {
+                                var obj = {name: JSON[j].location};
+                                JSON[i].venue = obj;
+                            }
+                            JSON[j] = null
+                            
                         }
                     }
                 }
@@ -334,22 +347,29 @@ function removeDuplicates(JSON) {
 
 function containsWords(x, y) {
 
-    var xName = (x.hasOwnProperty('name')) ? x.name.toUpperCase() : x.summary.toUpperCase();
-    var xWords = xName.split(" ");
+    var xName = (x.hasOwnProperty('name')) ? x.name + " " + x.group.name : x.summary;
+    var xWords = xName.match(/[A-Z]*[^A-Z]+/g);
+    xWords.map(function (z) {
+        return z.toUpperCase()
+    });
 
-    var yName = (y.hasOwnProperty('name')) ? y.name.toUpperCase() : y.summary.toUpperCase();
-    var yWords = yName.split(" ");
+    var yName = (y.hasOwnProperty('name')) ? y.name + " " + y.group.name : y.summary;
+    var yWords = yName.match(/[A-Z]*[^A-Z]+/g);
+    yWords.map(function (z) {
+        return z.toUpperCase()
+    });
 
     for (var i = 0; i < xWords.length; i++) {
         for (var j = 0; j < yWords.length; j++) {
-            if (xWords[i] == yWords[j]) {
+            if (xWords[i] == yWords[j] && !commonWords.includes(xWords[i])) {
                 return true;
             }
         }
     }
     return false;
-
 }
+
+
 
 function drawCalendar(JSON, t) {
     document.getElementById("eventsContainer").innerHTML = "";
@@ -397,7 +417,9 @@ function drawMeetupEvent(x) {
     var venueName = (x.hasOwnProperty('venue')) ? x.venue.name : "N/A";
     var venueAddress = (x.hasOwnProperty('venue')) ? x.venue.address_1 : "";
     var venuePostcode = (x.hasOwnProperty('venue')) ? x.venue.city : "";
-
+    var venue = (venueName == "N/A") ? "N/A" : venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')';
+    venue = venue.replace("undefined", "").replace("undefined", "").replace(' - ()', "");
+    
     if (time != "N/A" && duration != "") {
         var timeC = timeConvert(time);
         var until = timeConvert(timeUntil(time, duration));
@@ -410,7 +432,7 @@ function drawMeetupEvent(x) {
         timeRange = timeConvert(time);
     }
 
-    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venueName + ' - ' + venueAddress + ' (' + venuePostcode + ')' + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venue + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
 
     eventsContainer.insertAdjacentHTML('beforeend', event);
 }
