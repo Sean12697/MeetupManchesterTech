@@ -258,6 +258,7 @@ function generateAllEvents(techNWMeetups, t) {
                 eventsJSON = eventsJSON.map(a => a.data)[0];
             }
 
+            eventsJSON = addLocal(eventsJSON);
             console.log(eventsJSON);
             var e = mergeMeetupTechNW(eventsJSON, techNWMeetups);
             e = sortMeetups(e);
@@ -268,6 +269,20 @@ function generateAllEvents(techNWMeetups, t) {
         });
 }
 
+
+function addLocal(JSON) {
+    for (var i = 0; i < JSON.length; i++) {
+        if (!JSON[i].hasOwnProperty('local_date') && !JSON[i].hasOwnProperty('local_time')) {
+                var time = new Date(JSON[i].time);
+                var month = (time.getMonth() > 9) ? time.getMonth() + 1 : '0' + (time.getMonth() + 1);
+                var day = (time.getDay() > 9) ? time.getDay() : '0' + time.getDay();
+                var hour = (time.getHours() > 9) ? time.getHours() : '0' + time.getHours();
+                var minute = (time.getMinutes() > 9) ? time.getMinutes() : '0' + time.getMinutes();
+                JSON[i].local_date = time.getFullYear() + '-' + month + '-' + day;
+                JSON[i].local_time = hour + ':' + minute;
+            }
+    } return JSON;
+}
 
 function mergeMeetupTechNW(Meetup, TechNW) {
     return Meetup.concat(TechNW);
@@ -307,7 +322,7 @@ function removeDuplicates(JSON) {
             var xDay = (x.hasOwnProperty('start')) ? x.start.dateTime.substr(8, 2) : x.local_date.substr(8, 2);
 
             var xMonth = (x.hasOwnProperty('start')) ? new Date(x.start.dateTime).getMonth() + 1 : parseInt(x.local_date.substring(5, 7));
-
+            
             for (var j = i + 1; j < JSON.length && JSON[j] != null && xDay == ((JSON[j].hasOwnProperty('start')) ? JSON[j].start.dateTime.substr(8, 2) : JSON[j].local_date.substr(8, 2)); j++) {
 
                 var y = JSON[j];
@@ -422,6 +437,13 @@ function drawMeetupEvent(x) {
     var duration = (x.hasOwnProperty('duration')) ? x.duration : "";
     var rsvp = x.yes_rsvp_count;
     var rsvpLimit = (x.hasOwnProperty('rsvp_limit')) ? x.rsvp_limit : "∞";
+    
+    var fee = "";
+    if (x.hasOwnProperty('fee')) {
+        var a = Math.round(x.fee.amount * 100) / 100;
+        var t = (x.fee.currency == "GBP") ? "£" : x.fee.currency;
+        fee = '<a>' + t + a + '</a>';
+    }
 
     var venueName = (x.hasOwnProperty('venue')) ? x.venue.name : "N/A";
     var venueAddress = (x.hasOwnProperty('venue')) ? x.venue.address_1 : "";
@@ -441,7 +463,7 @@ function drawMeetupEvent(x) {
         timeRange = timeConvert(time);
     }
 
-    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p></div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venue + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p> ' + fee + '</div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venue + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
 
     eventsContainer.insertAdjacentHTML('beforeend', event);
 }
