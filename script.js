@@ -275,7 +275,7 @@ function addLocal(JSON) {
         if (!JSON[i].hasOwnProperty('local_date') && !JSON[i].hasOwnProperty('local_time')) {
                 var time = new Date(JSON[i].time);
                 var month = (time.getMonth() > 9) ? time.getMonth() + 1 : '0' + (time.getMonth() + 1);
-                var day = (time.getDay() > 9) ? time.getDay() : '0' + time.getDay();
+                var day = (time.getDate() > 9) ? time.getDate() : '0' + time.getDate();
                 var hour = (time.getHours() > 9) ? time.getHours() : '0' + time.getHours();
                 var minute = (time.getMinutes() > 9) ? time.getMinutes() : '0' + time.getMinutes();
                 JSON[i].local_date = time.getFullYear() + '-' + month + '-' + day;
