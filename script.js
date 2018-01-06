@@ -619,7 +619,7 @@ function setupButtons() {
     method = document.getElementById("method");
 
     var allIndex = fullArray();
-    var socialIndex = ["freelance", "North-West-IT-Crowd-Beer-BBQ", "Social-Software"];
+    var socialIndex = ["freelance", "North-West-IT-Crowd-Beer-BBQ", "Social-Software", "HackerNestMAN"];
     var uxIndex = ["UX"];
     var workshopsIndex = ["CodeUp", "Code-Your-Future"];
     var specializedIndex = ["DotNetNorth", "Magento", "Java", "Manchester-R", "ManchesterWordPressUserGroup", "JS", "Ruby", "scala"];
