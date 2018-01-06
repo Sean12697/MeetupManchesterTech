@@ -376,7 +376,8 @@ label {
     }
     .event .numbers {
         text-align: center;
-        padding: 25px 0px;
+        padding: 5px 0px;
+        margin: auto;
     }
     .event .details {
         text-align: left;
