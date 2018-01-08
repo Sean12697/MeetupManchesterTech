@@ -110,6 +110,7 @@ function generateCalendar(x, t) {
             } else {
                 eventsJSON = eventsJSON.map(a => a.data)[0];
             }
+            eventsJSON = addLocal(eventsJSON);
             console.log(eventsJSON);
             drawCalendar(eventsJSON, t);
         });
@@ -406,7 +407,7 @@ function drawCalendar(JSON, t) {
         var name = (x.hasOwnProperty('name')) ? x.name.toUpperCase() : x.summary.toUpperCase();
 
         if (desc.includes(t) || name.includes(t)) {
-
+            
             var month = (x.hasOwnProperty('start')) ? new Date(x.start.dateTime).getMonth() + 1 : parseInt(x.local_date.substring(5, 7));
 
             var year = (x.hasOwnProperty('start')) ? '20' + (new Date(x.start.dateTime).getYear()).toString().substring(1, 3) : parseInt(x.local_date.substring(0, 4));
