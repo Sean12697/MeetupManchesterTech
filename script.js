@@ -127,14 +127,14 @@ function searchMeetups() {
         } else {
             groups[i].style.display = "none";
         }
-    }
+    } selectOnlyAllShown();
 }
 
 function showAllMeetups() {
     var group = document.getElementsByClassName("group");
     for (var i = 0; i < group.length; i++) {
         group[i].style.display = "inline-block";
-    }
+    } selectOnlyAllShown();
 }
 
 function selectAllShown() {
@@ -210,8 +210,8 @@ function getTechNW(merge, t) {
     document.getElementById("eventsContainer").innerHTML = "";
     eventsContainer.insertAdjacentHTML('beforeend', '<div class="loader"></div>');
     var r = new XMLHttpRequest();
-
-    r.open('GET', 'https://www.googleapis.com/calendar/v3/calendars/a73q3trj8bssqjifgolb1q8fr4@group.calendar.google.com/events?key=AIzaSyCR3-ptjHE-_douJsn8o20oRwkxt-zHStY&maxResults=9999&singleEvents=true&orderBy=starttime', true);
+    
+    r.open('GET', 'https://www.googleapis.com/calendar/v3/calendars/a73q3trj8bssqjifgolb1q8fr4@group.calendar.google.com/events?key=AIzaSyCR3-ptjHE-_douJsn8o20oRwkxt-zHStY&maxResults=9999&singleEvents=true&orderBy=starttime&timeMin=' + ISODateString(new Date()) + "&timeMax=" + ISODateString(new Date ((new Date().valueOf()) + 31540000000)), true);
 
     r.onload = () => {
         var data = JSON.parse(r.responseText);
@@ -274,15 +274,16 @@ function generateAllEvents(techNWMeetups, t) {
 function addLocal(JSON) {
     for (var i = 0; i < JSON.length; i++) {
         if (!JSON[i].hasOwnProperty('local_date') && !JSON[i].hasOwnProperty('local_time')) {
-                var time = new Date(JSON[i].time);
-                var month = (time.getMonth() > 9) ? time.getMonth() + 1 : '0' + (time.getMonth() + 1);
-                var day = (time.getDate() > 9) ? time.getDate() : '0' + time.getDate();
-                var hour = (time.getHours() > 9) ? time.getHours() : '0' + time.getHours();
-                var minute = (time.getMinutes() > 9) ? time.getMinutes() : '0' + time.getMinutes();
-                JSON[i].local_date = time.getFullYear() + '-' + month + '-' + day;
-                JSON[i].local_time = hour + ':' + minute;
-            }
-    } return JSON;
+            var time = new Date(JSON[i].time);
+            var month = (time.getMonth() > 9) ? time.getMonth() + 1 : '0' + (time.getMonth() + 1);
+            var day = (time.getDate() > 9) ? time.getDate() : '0' + time.getDate();
+            var hour = (time.getHours() > 9) ? time.getHours() : '0' + time.getHours();
+            var minute = (time.getMinutes() > 9) ? time.getMinutes() : '0' + time.getMinutes();
+            JSON[i].local_date = time.getFullYear() + '-' + month + '-' + day;
+            JSON[i].local_time = hour + ':' + minute;
+        }
+    }
+    return JSON;
 }
 
 function mergeMeetupTechNW(Meetup, TechNW) {
@@ -323,7 +324,7 @@ function removeDuplicates(JSON) {
             var xDay = (x.hasOwnProperty('start')) ? x.start.dateTime.substr(8, 2) : x.local_date.substr(8, 2);
 
             var xMonth = (x.hasOwnProperty('start')) ? new Date(x.start.dateTime).getMonth() + 1 : parseInt(x.local_date.substring(5, 7));
-            
+
             for (var j = i + 1; j < JSON.length && JSON[j] != null && xDay == ((JSON[j].hasOwnProperty('start')) ? JSON[j].start.dateTime.substr(8, 2) : JSON[j].local_date.substr(8, 2)); j++) {
 
                 var y = JSON[j];
@@ -407,7 +408,7 @@ function drawCalendar(JSON, t) {
         var name = (x.hasOwnProperty('name')) ? x.name.toUpperCase() : x.summary.toUpperCase();
 
         if (desc.includes(t) || name.includes(t)) {
-            
+
             var month = (x.hasOwnProperty('start')) ? new Date(x.start.dateTime).getMonth() + 1 : parseInt(x.local_date.substring(5, 7));
 
             var year = (x.hasOwnProperty('start')) ? '20' + (new Date(x.start.dateTime).getYear()).toString().substring(1, 3) : parseInt(x.local_date.substring(0, 4));
@@ -438,7 +439,7 @@ function drawMeetupEvent(x) {
     var duration = (x.hasOwnProperty('duration')) ? x.duration : "";
     var rsvp = x.yes_rsvp_count;
     var rsvpLimit = (x.hasOwnProperty('rsvp_limit')) ? x.rsvp_limit : "∞";
-    
+
     var fee = "";
     if (x.hasOwnProperty('fee')) {
         var a = Math.round(x.fee.amount * 100) / 100;
@@ -607,6 +608,13 @@ function clearMeetupSearch() {
     showAllMeetups();
 }
 
+function ISODateString(d) {
+    function pad(n) {
+        return n < 10 ? '0' + n : n
+    }
+    return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes()) + ':' + pad(d.getUTCSeconds()) + 'Z'
+}
+
 function setupButtons() {
     all = document.getElementById("all");
     social = document.getElementById("social");
@@ -643,33 +651,43 @@ function setupButtons() {
 
     all.addEventListener("click", function () {
         showEvents(allIndex);
+        selectOnlyAllShown();
     });
     social.addEventListener("click", function () {
         showEvents(socialIndex);
+        selectOnlyAllShown();
     });
     ux.addEventListener("click", function () {
         showEvents(uxIndex);
+        selectOnlyAllShown();
     });
     workshops.addEventListener("click", function () {
         showEvents(workshopsIndex);
+        selectOnlyAllShown();
     });
     specialized.addEventListener("click", function () {
         showEvents(specializedIndex);
+        selectOnlyAllShown();
     });
     data.addEventListener("click", function () {
         showEvents(dataIndex);
+        selectOnlyAllShown();
     });
     web.addEventListener("click", function () {
         showEvents(webIndex);
+        selectOnlyAllShown();
     });
     ladies.addEventListener("click", function () {
         showEvents(ladiesIndex);
+        selectOnlyAllShown();
     });
     blockchain.addEventListener("click", function () {
         showEvents(blockchainIndex);
+        selectOnlyAllShown();
     });
     method.addEventListener("click", function () {
         showEvents(methodIndex);
+        selectOnlyAllShown();
     });
 }
 
@@ -681,7 +699,7 @@ function initDOMelements() {
     clearNavSearch = document.getElementById("clearNavSearch");
     generate = document.getElementById("generate");
     select = document.getElementById("select");
-    selectShown = document.getElementById("selectShown");
+    // selectShown = document.getElementById("selectShown");
     deselect = document.getElementById("deselect");
     invertSelect = document.getElementById("invertSelect");
     groupsContainer = document.getElementById("groupsContainer");
@@ -700,7 +718,7 @@ function initDOMelements() {
     clearNavSearch.addEventListener("click", clearMeetupSearch);
 
     select.addEventListener("click", selectAllShown);
-    selectShown.addEventListener("click", selectOnlyAllShown);
+    // selectShown.addEventListener("click", selectOnlyAllShown);
     deselect.addEventListener("click", deselectAllShown);
     invertSelect.addEventListener("click", invertSelection);
 
