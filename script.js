@@ -634,7 +634,7 @@ function setupButtons() {
     var allIndex = fullArray();
     var socialIndex = ["freelance", "North-West-IT-Crowd-Beer-BBQ", "Social-Software", "HackerNestMAN"];
     var uxIndex = ["UX"];
-    var workshopsIndex = ["CodeUp", "Code-Your-Future"];
+    var workshopsIndex = ["CodeUp", "Code-Your-Future", "CoderDojo"];
     var specializedIndex = ["DotNetNorth", "Magento", "Java", "Manchester-R", "ManchesterWordPressUserGroup", "JS", "Ruby", "scala"];
     var dataIndex = ["Digital-Analytics-Manchester", "DB", "InfoSec", "Power-BI", "Manchester-R", "Neo4j-Manchester", "Data", "Couchbase"];
     var webIndex = ["JavaScript", "SEO", "AWS", "node", "JS", "React", "Angular", "FRED", "WordPress"];
