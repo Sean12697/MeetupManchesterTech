@@ -64,7 +64,7 @@ function drawMeetups(JSON) {
         var name = x.name;
         var link = x.link;
         var members = x.members;
-        var thumb = (x.hasOwnProperty('group_photo')) ? x.group_photo.photo_link : x.organizer.photo.photo_link;
+        var thumb = (x.hasOwnProperty('group_photo')) ? x.group_photo.photo_link : (x.hasOwnProperty('organizer')) ? x.organizer.photo.photo_link : 'blank.jpg';
         var group = '<div class="group" id="' + i + '"><div class="meetupImg"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label></div><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '</p></div></div>';
         groupsContainer.insertAdjacentHTML('beforeend', group);
     }
