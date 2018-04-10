@@ -446,9 +446,9 @@ function containsWords(x, y) {
 
 
 function drawCalendar(JSON, t) {
-    loadingText.innerHTML = "Drawing";
     document.getElementById("eventsContainer").innerHTML = "";
     var m = 0;
+    if (JSON.length == 0) document.getElementById("eventsContainer").innerHTML = '<div class="centerElements"><h3>No Events</h3></div>';
     for (var i = 0; i < JSON.length; i++) {
         var x = JSON[i];
 
