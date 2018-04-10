@@ -43,9 +43,27 @@ function drawMeetups(JSON) {
         var members = x.members;
         var tilNext = x.tilNext;
         var sinceLast = x.sinceLast;
-        // Format Better Soon
-        var txtEvents = (tilNext == 'N/A' && sinceLast == 'N/A') ? 'No Events' : (tilNext == 'N/A') ? 'Since Last: ' + sinceLast : (tilNext == 0) ? 'TODAY' : (tilNext == 1) ? 'TOMORROW' : 'Until Next: ' + tilNext;
-        
+
+        var txtEvents = 'N/A';
+        if (tilNext == 'N/A' && sinceLast == 'N/A') {
+            txtEvents = 'No Events';
+        } else {
+            if (tilNext == 'N/A') {
+                txtEvents = (sinceLast == 1) ? 'YESTERDAY' : 'Since Last: ' + sinceLast;
+            } else {
+                switch (tilNext) {
+                    case 0:
+                        txtEvents = 'TODAY';
+                        break;
+                    case 1:
+                        txtEvents = 'TOMORROW';
+                        break;
+                    default: 
+                        txtEvents = 'Until Next: ' + tilNext;
+                }
+            }
+        }
+
         var thumb = 'blank.jpg';
         if (x.hasOwnProperty('group_photo')) {
             thumb = x.group_photo.photo_link;
