@@ -1,37 +1,14 @@
 const app = {};
 window.addEventListener('load', init);
 
-var searchBox;
-var navSearchBox;
-var search;
-var clearSearch;
-var clearNavSearch;
-var generate;
+var searchBox, navSearchBox, search, clearSearch, clearNavSearch, generate;
+// Catagory Elements
+var all, social, ux, workshops, specialized, data, web, ladies, blockchain, method;
 
-var all;
-var social;
-var ux;
-var workshops;
-var specialized;
-var data;
-var web;
-var ladies;
-var blockchain;
-var method;
-
-var select;
-var selectShown;
-var deselect;
-var invertSelect;
-
-var groupsContainer;
-var eventsContainer;
-
-var eventSearch;
-var searchEvents;
-
-var techNW;
-var generateAll;
+var select, selectShown, deselect,invertSelect;
+var groupsContainer,eventsContainer;
+var eventSearch, searchEvents;
+var techNW, generateAll;
 
 let gSelected = 10; // Bodge for one selected meetup group, needs to be more than 1 for search
 
@@ -64,6 +41,7 @@ function drawMeetups(JSON) {
         var name = x.name;
         var link = x.link;
         var members = x.members;
+        var tilNext = x.tilNext;
         
         var thumb = 'blank.jpg';
         if (x.hasOwnProperty('group_photo')) {
@@ -76,7 +54,7 @@ function drawMeetups(JSON) {
             }
         }
         
-        var group = '<div class="group" id="' + i + '"><div class="meetupImg"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label></div><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '</p></div></div>';
+        var group = '<div class="group" id="' + i + '"><div class="meetupImg"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label></div><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '<br/>Days \'til: ' + tilNext + '</p></div></div>';
         groupsContainer.insertAdjacentHTML('beforeend', group);
     }
 }
@@ -100,9 +78,32 @@ function initGetMeetups() {
                 return !errorMeetups.includes(n);
             });
             console.log(MeetupsJSON);
-            drawMeetups(MeetupsJSON);
-            setupButtons();
+            addUntilNext(MeetupsJSON); // REMOVE IF DOESN'T WORK
+            // drawMeetups(MeetupsJSON);
+            // setupButtons();
         });
+}
+
+function addUntilNext(MeetupsJSON) {
+    var i = meetups;
+    i = i.map(app.getEvents);
+    $.when(...i)
+    .then((...i) => {
+        i = i.map(a => a[0].data);
+        console.log(i);
+        for (var j = 0; j < i.length; j++) {
+           // console.log(i[j][0]);
+            MeetupsJSON[j].tilNext = (i[j].length == 0) ? "N/A" : daysUntil(i[j][0].time);
+        } drawMeetups(MeetupsJSON);
+        setupButtons();
+    });
+
+}
+
+function daysUntil(epoch) { // using epoch time since "local_date" is not always defined
+    var now = new Date();
+    var event = new Date(epoch); //var event = new Date(date.substr(0,4),date.substr(5,2),date.substr(8,2));
+    return Math.round(Math.abs((now.getTime() - event.getTime()) / (24*60*60*1000)));
 }
 
 function searchEventsFor() {
