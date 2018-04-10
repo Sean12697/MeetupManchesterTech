@@ -1,7 +1,7 @@
 const app = {};
 window.addEventListener('load', init);
 
-var searchBox, navSearchBox, search, clearSearch, clearNavSearch, generate;
+var searchBox, navSearchBox, search, clearSearch, clearNavSearch, generate, loadingText;
 // Catagory Elements
 var all, social, ux, workshops, specialized, data, web, ladies, blockchain, method;
 
@@ -13,7 +13,7 @@ var techNW, generateAll;
 let gSelected = 10; // Bodge for one selected meetup group, needs to be more than 1 for search
 
 const commonWords = ["MANCHESTER", "GROUP", "USER", "-"];
-var meetups = ["android_mcr", "BCS-Greater-Manchester-Branch", "blabtalks", "meetup-group-wHuRVtrk", "CIA-Chicks-in-Advertising-Manchester", "Code-Your-Future-Manchester", "CodeUpManchester", "CodeUp-Salford", "Digital-Analytics-Manchester", "Digital_North_", "DotNetNorth", "Enterprise-UX", "freelance-folk-manchester", "HackerNestMAN", "hackspace-manchester", "HadoopManchester", "HCD-Manchester", "IoTMCR", "JavaScript-North-West", "Ladies-of-Code-Manchester", "Lean-Agile-Manchester", "MaccTech", "Magento-Minds-of-Manchester", "MancDB", "Manchester-Bitcoin-blockchain-and-other-cryptocurrencies", "Manchester-Angular-Workshop", "manchesterentrepreneursclub", "Manchester-Futurists", "Manchester-Grey-Hats", "Manchester-InfoSec", "ManchesterUK-Java-Community", "Power-BI-Manchester-Meetup", "Manchester-R", "Manchester-React-User-Group", "ManchesterWordPressUserGroup", "MancJS", "McrFRED", "McrUXD", "Messaging-Bots-Manchester", "Music-Culture-and-Technology", "Neo4j-Manchester", "North-West-IT-Crowd-Beer-BBQ-Event", "North-West-Ruby-User-Group", "Open-Data-Manchester", "Practical-Business-Workshops-Manchester", "RealUX", "Salford-Lean-Startup", "scala-developers", "SEO-Manchester", "Social-Software-Development-Meetup-in-Manchester", "Tech-for-Good-Live", "Tech-Leads-NW", "Test-Hive-Manchester", "ThoughtWorks-Manchester-Events", "UK-North-Crypto-Currency-Meetup", "The-UX-Crunch-North", "VRManchester", "AWS-User-Group-North", "Code-Nation", "Manchester-Open-Source", "DevOps-Manchester", "StartupBlink-Manchester", "nwdrupal", "Manchester-Xamarin-User-Group", "manchester-node-workshop", "DATA-VISUALISATION-MEETUP", "BlockchainManchesterMeetup", "Manchester-WordPress-SEO-Startup", "Manchester-Unity3D-Game-Dev-Meetup", "Google-Cloud-Platform-Users-North-West", "Manc-Bitcoin", "craftcmsmanchester", "Couchbase-Manchester", "NSManchester", "Python-North-West-Meetup", "Expert-Talks-Manchester", "HER-Data-MCR", "northernsoho", "North-West-Playtesters", "VueJS-Manchester", "North-West-Tester-Gathering", "etechmcr", "Introduction-to-Bitcoin-and-Cryptoeconomics", "Bitcoin-Manchester", "Manchester-F-User-Group", "Manchester-Technology-Leaders-Meet-Up-Group", "North-West-Bitcoin-Meetup", "WMUGMCR", "Kotlin-Manchester", "Docker-Manchester", "Manchester-OpenStack-Meetup", "Women-in-Technology-North", "IBM-PowerAI-Manchester", "MCR-CoderDojo", "meetup-group-MsiOIcyg", "Manchester-Blockchain-Organisation", "EOS-Manchester", "HacksHackersMCR", "R-Ladies-Manchester", "golang-mcr", "Ministry-of-Testing-Manchester", "Redis-Manchester", "gdg_manchester", "Manchester-Artificial-Intelligence-Meetup","GraphQL-Manchester", "PyData-Manchester","Codebar-Manchester", "The-Future-of-DevOps-and-Security", "Manchester-Kafka", "Manchester-Bitcoin-Miners-Meetup"]; // wHuRVtrk = Blockchain, meetup-group-MsiOIcyg = M1Con
+var meetups = ["android_mcr", "BCS-Greater-Manchester-Branch", "blabtalks", "meetup-group-wHuRVtrk", "CIA-Chicks-in-Advertising-Manchester", "Code-Your-Future-Manchester", "CodeUpManchester", "CodeUp-Salford", "Digital-Analytics-Manchester", "Digital_North_", "DotNetNorth", "Enterprise-UX", "freelance-folk-manchester", "HackerNestMAN", "hackspace-manchester", "HadoopManchester", "HCD-Manchester", "IoTMCR", "JavaScript-North-West", "Ladies-of-Code-Manchester", "Lean-Agile-Manchester", "MaccTech", "Magento-Minds-of-Manchester", "MancDB", "Manchester-Bitcoin-blockchain-and-other-cryptocurrencies", "Manchester-Angular-Workshop", "manchesterentrepreneursclub", "Manchester-Futurists", "Manchester-Grey-Hats", "Manchester-InfoSec", "ManchesterUK-Java-Community", "Power-BI-Manchester-Meetup", "Manchester-R", "Manchester-React-User-Group", "ManchesterWordPressUserGroup", "MancJS", "McrFRED", "McrUXD", "Messaging-Bots-Manchester", "Neo4j-Manchester", "North-West-IT-Crowd-Beer-BBQ-Event", "North-West-Ruby-User-Group", "Open-Data-Manchester", "Practical-Business-Workshops-Manchester", "RealUX", "Salford-Lean-Startup", "scala-developers", "SEO-Manchester", "Social-Software-Development-Meetup-in-Manchester", "Tech-for-Good-Live", "Tech-Leads-NW", "Test-Hive-Manchester", "ThoughtWorks-Manchester-Events", "UK-North-Crypto-Currency-Meetup", "The-UX-Crunch-North", "VRManchester", "AWS-User-Group-North", "Code-Nation", "Manchester-Open-Source", "DevOps-Manchester", "StartupBlink-Manchester", "nwdrupal", "Manchester-Xamarin-User-Group", "manchester-node-workshop", "DATA-VISUALISATION-MEETUP", "BlockchainManchesterMeetup", "Manchester-WordPress-SEO-Startup", "Manchester-Unity3D-Game-Dev-Meetup", "Google-Cloud-Platform-Users-North-West", "Manc-Bitcoin", "craftcmsmanchester", "Couchbase-Manchester", "NSManchester", "Python-North-West-Meetup", "Expert-Talks-Manchester", "HER-Data-MCR", "northernsoho", "North-West-Playtesters", "VueJS-Manchester", "North-West-Tester-Gathering", "etechmcr", "Introduction-to-Bitcoin-and-Cryptoeconomics", "Bitcoin-Manchester", "Manchester-F-User-Group", "Manchester-Technology-Leaders-Meet-Up-Group", "North-West-Bitcoin-Meetup", "WMUGMCR", "Kotlin-Manchester", "Docker-Manchester", "Manchester-OpenStack-Meetup", "Women-in-Technology-North", "IBM-PowerAI-Manchester", "MCR-CoderDojo", "meetup-group-MsiOIcyg", "Manchester-Blockchain-Organisation", "EOS-Manchester", "HacksHackersMCR", "R-Ladies-Manchester", "golang-mcr", "Ministry-of-Testing-Manchester", "Redis-Manchester", "gdg_manchester", "Manchester-Artificial-Intelligence-Meetup","GraphQL-Manchester", "PyData-Manchester","Codebar-Manchester", "The-Future-of-DevOps-and-Security", "Manchester-Kafka", "Manchester-Bitcoin-Miners-Meetup"]; // wHuRVtrk = Blockchain, meetup-group-MsiOIcyg = M1Con
 // DEAD GROUPS:  ManchesterData, Manchester-Elastic-Fantastics, Manchester-Cassandra-Users, Manchester-MongoDB-User-Group, The-Manchester-PostgreSQL-Meetup, Manchester-Web-Performance-Group
 
 const months = new Map([[1, 'January'], [2, 'February'], [3, 'March'], [4, 'April'], [5, 'May'], [6, 'June'], [7, 'July'], [8, 'August'], [9, 'September'], [10, 'October'], [11, 'November'], [12, 'December']]);
@@ -42,6 +42,8 @@ function drawMeetups(JSON) {
         var link = x.link;
         var members = x.members;
         var tilNext = x.tilNext;
+        var sinceLast = x.sinceLast;
+        var txtEvents = (tilNext == 'N/A' && sinceLast == 'N/A') ? 'No Events' : (tilNext == 'N/A') ? 'Since Last: ' + sinceLast : 'Until Next: ' + tilNext;
         
         var thumb = 'blank.jpg';
         if (x.hasOwnProperty('group_photo')) {
@@ -54,13 +56,14 @@ function drawMeetups(JSON) {
             }
         }
         
-        var group = '<div class="group" id="' + i + '"><div class="meetupImg"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label></div><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '<br/>Days \'til: ' + tilNext + '</p></div></div>';
+        var group = '<div class="group" id="' + i + '"><div class="meetupImg"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label></div><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '<br/>' + txtEvents + '</p></div></div>';
         groupsContainer.insertAdjacentHTML('beforeend', group);
     }
 }
 
 function initGetMeetups() {
     console.log(meetups);
+    loadingText.innerHTML = "Getting Groups";
     MeetupsJSON = MeetupsJSON.map(app.getMeetups);
     var errorMeetups = [];
 
@@ -86,24 +89,47 @@ function initGetMeetups() {
 
 function addUntilNext(MeetupsJSON) {
     var i = meetups;
+    loadingText.innerHTML = "Adding Until Next";
     i = i.map(app.getEvents);
     $.when(...i)
     .then((...i) => {
         i = i.map(a => a[0].data);
-        console.log(i);
+        // console.log(i);
         for (var j = 0; j < i.length; j++) {
            // console.log(i[j][0]);
             MeetupsJSON[j].tilNext = (i[j].length == 0) ? "N/A" : daysUntil(i[j][0].time);
+        } addSince(MeetupsJSON);
+        // drawMeetups(MeetupsJSON);
+        // setupButtons();
+    });
+}
+
+function addSince(MeetupsJSON) {
+    var i = meetups;
+    loadingText.innerHTML = "Adding Since Last";
+    i = i.map(app.getPastEvents);
+    $.when(...i)
+    .then((...i) => {
+        i = i.map(a => a[0].data);
+        //console.log(i);
+        for (var j = 0; j < i.length; j++) {
+           // console.log(i[j][0]);
+            MeetupsJSON[j].sinceLast = (i[j].length == 0) ? "N/A" : daysSince(i[j][0].time);
         } drawMeetups(MeetupsJSON);
         setupButtons();
     });
-
 }
 
 function daysUntil(epoch) { // using epoch time since "local_date" is not always defined
     var now = new Date();
     var event = new Date(epoch); //var event = new Date(date.substr(0,4),date.substr(5,2),date.substr(8,2));
     return Math.round(Math.abs((now.getTime() - event.getTime()) / (24*60*60*1000)));
+}
+
+function daysSince(epoch) { // using epoch time since "local_date" is not always defined
+    var now = new Date();
+    var event = new Date(epoch); //var event = new Date(date.substr(0,4),date.substr(5,2),date.substr(8,2));
+    return Math.round(Math.abs((event.getTime() - now.getTime()) / (24*60*60*1000)));
 }
 
 function searchEventsFor() {
@@ -212,6 +238,12 @@ function getMeetupsFromIndexes(indexes) {
 
 app.getEvents = (meetup) => $.ajax({
     url: 'https://api.meetup.com/' + meetup + '/events',
+    method: 'GET',
+    dataType: 'jsonp'
+});
+
+app.getPastEvents = (meetup) => $.ajax({
+    url: 'https://api.meetup.com/' + meetup + '/events?desc=true&status=past',
     method: 'GET',
     dataType: 'jsonp'
 });
@@ -414,6 +446,7 @@ function containsWords(x, y) {
 
 
 function drawCalendar(JSON, t) {
+    loadingText.innerHTML = "Drawing";
     document.getElementById("eventsContainer").innerHTML = "";
     var m = 0;
     for (var i = 0; i < JSON.length; i++) {
@@ -724,6 +757,7 @@ function initDOMelements() {
     searchEvents = document.getElementById("searchEvents");
     techNW = document.getElementById("techNW");
     generateAll = document.getElementById("generateAll");
+    loadingText = document.getElementById("loadingText");
 
     generate.addEventListener("click", function () {
         generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()), "");
