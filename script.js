@@ -6,7 +6,8 @@ var searchBox, navSearchBox, search, clearSearch, clearNavSearch, generate, load
 var all, social, ux, workshops, specialized, data, web, ladies, blockchain, method;
 
 var select, selectShown, deselect,invertSelect;
-var groupsContainer,eventsContainer;
+// var def, az, za, membersAsc, membersDesc, upcoming;
+var groupsContainer, eventsContainer;
 var eventSearch, searchEvents;
 var techNW, generateAll;
 
@@ -20,6 +21,7 @@ const months = new Map([[1, 'January'], [2, 'February'], [3, 'March'], [4, 'Apri
 
 var eventsJSON = meetups;
 var MeetupsJSON = meetups;
+var MeetupsJSONfinal= [];
 
 function init() {
     meetups.sort(function (a, b) {
@@ -134,7 +136,9 @@ function addSince(MeetupsJSON) {
         for (var j = 0; j < i.length; j++) {
            // console.log(i[j][0]);
             MeetupsJSON[j].sinceLast = (i[j].length == 0) ? "N/A" : daysSince(i[j][0].time);
-        } drawMeetups(MeetupsJSON);
+            MeetupsJSON[j].sortID = j;
+        } MeetupsJSONfinal = MeetupsJSON;
+        drawMeetups(MeetupsJSON);
         setupButtons();
     });
 }
@@ -775,6 +779,39 @@ function initDOMelements() {
     techNW = document.getElementById("techNW");
     generateAll = document.getElementById("generateAll");
     loadingText = document.getElementById("loadingText");
+
+    // Sorts
+    document.getElementById("default").addEventListener("click", function () {
+        drawMeetups(MeetupsJSONfinal.sort((a, b) => a.sortID - b.sortID));
+    });
+    document.getElementById("az").addEventListener("click", function () {
+        drawMeetups(MeetupsJSONfinal.sort((a, b) => {
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+            return 0;
+        }));  
+    });
+    document.getElementById("za").addEventListener("click", function () {
+        drawMeetups(MeetupsJSONfinal.sort((a, b) => {
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return -1;
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return 1;
+            return 0;
+        }));  
+    });
+    document.getElementById("membersAsc").addEventListener("click", function () {
+        drawMeetups(MeetupsJSONfinal.sort((a, b) => b.members - a.members)); 
+    });
+    document.getElementById("membersDesc").addEventListener("click", function () {
+        drawMeetups(MeetupsJSONfinal.sort((a, b) => a.members - b.members)); 
+    });
+    document.getElementById("upcoming").addEventListener("click", function () {
+        drawMeetups(MeetupsJSONfinal.sort((a, b) => {
+            if (a.tilNext != 'N/A' && b.tilNext != 'N/A') return a.tilNext - b.tilNext;
+            if (a.tilNext == 'N/A') return 1;
+            if (b.tilNext == 'N/A') return -1;
+            return 0;
+        })); // (a.tilNext == 'N/A' || b.tilNext == 'N/A') ? (a.tilNext == 'N/A') ? -1 : 1 : a.tilNext - b.tilNext));  
+    });
 
     generate.addEventListener("click", function () {
         spinner();
