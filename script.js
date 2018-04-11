@@ -51,7 +51,7 @@ function drawMeetups(JSON) {
             txtEvents = 'No Events';
         } else {
             if (tilNext == 'N/A') {
-                txtEvents = (sinceLast == 1) ? 'YESTERDAY' : 'Since Last: ' + sinceLast;
+                txtEvents = (sinceLast == 1) ? 'YESTERDAY' : 'Last: ' + sinceLast + ' Days';
             } else {
                 switch (tilNext) {
                     case 0:
@@ -61,7 +61,7 @@ function drawMeetups(JSON) {
                         txtEvents = 'TOMORROW';
                         break;
                     default: 
-                        txtEvents = 'Until Next: ' + tilNext;
+                        txtEvents = 'Next: ' + tilNext + ' Days';
                 }
             }
         }
