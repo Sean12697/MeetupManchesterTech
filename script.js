@@ -21,7 +21,7 @@ const months = new Map([[1, 'January'], [2, 'February'], [3, 'March'], [4, 'Apri
 
 var eventsJSON = meetups;
 var MeetupsJSON = meetups;
-var MeetupsJSONfinal= [];
+var MeetupJSONfinal = [];
 
 function init() {
     meetups.sort(function (a, b) {
@@ -39,9 +39,11 @@ function withoutMCR(x) {
 function drawMeetups(JSON) {
     groupsContainer.innerHTML = "";
     for (var i = 0; i < JSON.length; i++) {
+        if (JSON[i].show) {
         var x = JSON[i];
         var name = x.name;
         var link = x.link;
+        var id = link.replace("https://www.meetup.com/", "").replace("/", "");
         var members = x.members;
         var tilNext = x.tilNext;
         var sinceLast = x.sinceLast;
@@ -77,8 +79,9 @@ function drawMeetups(JSON) {
             }
         }
         
-        var group = '<div class="group" id="' + i + '"><div class="meetupImg"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label></div><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '<br/>' + txtEvents + '</p></div></div>';
+        var group = '<div class="group" id="' + id + '"><div class="meetupImg"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label></div><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '<br/>' + txtEvents + '</p></div></div>';
         groupsContainer.insertAdjacentHTML('beforeend', group);
+    }
     }
 }
 
@@ -111,18 +114,9 @@ function initGetMeetups() {
 function addUntilNext(MeetupsJSON) {
     var i = meetups;
     loadingText.innerHTML = "Adding Until Next";
-    i = i.map(app.getEvents);
-    $.when(...i)
-    .then((...i) => {
-        i = i.map(a => a[0].data);
-        // console.log(i);
-        for (var j = 0; j < i.length; j++) {
-           // console.log(i[j][0]);
-            MeetupsJSON[j].tilNext = (i[j].length == 0) ? "N/A" : daysUntil(i[j][0].time);
-        } addSince(MeetupsJSON);
-        // drawMeetups(MeetupsJSON);
-        // setupButtons();
-    });
+    for (var i = 0; i < MeetupsJSON.length; i++) {
+        MeetupsJSON[i].tilNext = (MeetupsJSON[i].hasOwnProperty('next_event')) ? daysUntil(MeetupsJSON[i].next_event.time) : "N/A";
+    } addSince(MeetupsJSON);
 }
 
 function addSince(MeetupsJSON) {
@@ -137,7 +131,8 @@ function addSince(MeetupsJSON) {
            // console.log(i[j][0]);
             MeetupsJSON[j].sinceLast = (i[j].length == 0) ? "N/A" : daysSince(i[j][0].time);
             MeetupsJSON[j].sortID = j;
-        } MeetupsJSONfinal = MeetupsJSON;
+            MeetupsJSON[j].show = true;
+        } MeetupJSONfinal = MeetupsJSON;
         drawMeetups(MeetupsJSON);
         setupButtons();
     });
@@ -175,6 +170,8 @@ function generateCalendar(x, t) {
             } else {
                 eventsJSON = eventsJSON.map(a => a.data)[0];
             }
+            
+            console.log(eventsJSON);
             eventsJSON = addLocal(eventsJSON);
             console.log(eventsJSON);
             drawCalendar(eventsJSON, t);
@@ -184,79 +181,41 @@ function generateCalendar(x, t) {
 function searchMeetups() {
     navSearchBox.value = this.value;
     searchBox.value = this.value;
-    var term = searchBox.value;
-    var groups = document.getElementsByClassName("group");
-    for (var i = 0; i < groups.length; i++) {
-        if (groups[i].innerHTML.toUpperCase().includes(term.toUpperCase())) {
-            groups[i].style.display = "inline-block";
-        } else {
-            groups[i].style.display = "none";
-        }
-    } selectOnlyAllShown();
+    var term = searchBox.value.toLowerCase();
+    for (var i = 0; i < MeetupJSONfinal.length; i++) {
+        MeetupJSONfinal[i].show = (MeetupJSONfinal[i].name.toLowerCase().includes(term)) ? true : false;
+    } drawMeetups(MeetupJSONfinal);
+    selectAllShown();
 }
 
 function showAllMeetups() {
-    var group = document.getElementsByClassName("group");
-    for (var i = 0; i < group.length; i++) {
-        group[i].style.display = "inline-block";
-    } selectOnlyAllShown();
+    for (var i = 0; i < MeetupJSONfinal.length; i++) MeetupJSONfinal[i].show = true;
+    drawMeetups(MeetupJSONfinal);
+    selectAllShown();
 }
 
 function selectAllShown() {
     var group = document.getElementsByClassName("group");
-    for (var i = 0; i < group.length; i++) {
-        if (!(group[i].style.display === 'none')) {
-            document.getElementById("g" + i).checked = false;
-        }
-    }
-}
-
-function selectOnlyAllShown() {
-    var group = document.getElementsByClassName("group");
-    for (var i = 0; i < group.length; i++) {
-        if (group[i].style.display === 'none') {
-            document.getElementById("g" + i).checked = true;
-        } else {
-            document.getElementById("g" + i).checked = false;
-        }
-    }
+    for (var i = 0; i < group.length; i++) group[i].firstChild.childNodes[0].checked = false;
 }
 
 function deselectAllShown() {
     var group = document.getElementsByClassName("group");
-    for (var i = 0; i < group.length; i++) {
-        if (!(group[i].style.display === 'none')) {
-            document.getElementById("g" + i).checked = true;
-        }
-    }
+    for (var i = 0; i < group.length; i++) group[i].firstChild.childNodes[0].checked = true;
 }
 
 function invertSelection() {
     var group = document.getElementsByClassName("group");
-    for (var i = 0; i < group.length; i++) {
-        var x = document.getElementById("g" + i);
-        x.checked = (x.checked) ? false : true;
-    }
+    for (var i = 0; i < group.length; i++) group[i].firstChild.childNodes[0].checked = (group[i].firstChild.childNodes[0].checked) ? false : true;
 }
 
-function getSelectedMeetupsIndexes() {
+function getSelectedMeetups() {
     var selected = [];
-    var group = document.getElementsByClassName("group");
-    for (var i = 0; i < meetups.length; i++) {
-        if (document.getElementById("g" + i).checked === false) {
-            selected.push(i);
-        }
-    }
-    gSelected = selected.length;
+    var groups = document.getElementsByClassName("group");
+    for (var i = 0; i < groups.length; i++) {
+        if (groups[i].firstChild.childNodes[0].checked === false) selected.push(groups[i].id);
+    } gSelected = selected.length;
     return selected;
-}
-
-function getMeetupsFromIndexes(indexes) {
-    var x = [];
-    for (var i = 0; i < indexes.length; i++) {
-        x.push(meetups[indexes[i]]);
-    }
-    return x;
 }
 
 app.getEvents = (meetup) => $.ajax({
@@ -327,7 +286,7 @@ function generateAllEvents(techNWMeetups, t) {
             } else {
                 eventsJSON = eventsJSON.map(a => a.data)[0];
             }
-
+            // console.log(eventsJSON);
             eventsJSON = addLocal(eventsJSON);
             console.log(eventsJSON);
             var e = mergeMeetupTechNW(eventsJSON, techNWMeetups);
@@ -351,8 +310,7 @@ function addLocal(JSON) {
             JSON[i].local_date = time.getFullYear() + '-' + month + '-' + day;
             JSON[i].local_time = hour + ':' + minute;
         }
-    }
-    return JSON;
+    } return JSON;
 }
 
 function mergeMeetupTechNW(Meetup, TechNW) {
@@ -439,7 +397,6 @@ function removeDuplicates(JSON) {
 }
 
 function containsWords(x, y) {
-
     var xName = (x.hasOwnProperty('name')) ? x.name + " " + x.group.name : x.summary;
     var xWords = xName.match(/[A-Z]*[^A-Z]+/g);
     if (xWords == null) xWords = xName.split(" ");
@@ -463,8 +420,6 @@ function containsWords(x, y) {
     }
     return false;
 }
-
-
 
 function drawCalendar(JSON, t) {
     document.getElementById("eventsContainer").innerHTML = "";
@@ -568,44 +523,27 @@ function pastEvent(date) {
     return false;
 };
 
-function showEvents(indexes) {
-    var group = document.getElementsByClassName("group");
-    for (var i = 0; i < meetups.length; i++) {
-        group[i].style.display = "none";
-    }
-    for (var i = 0; i < meetups.length; i++) {
-        if (iterate(group[i], indexes)) {
-            group[i].style.display = "inline-block";
-        }
-    }
+function showEvents(arr) {
+    for (var i = 0; i < MeetupJSONfinal.length; i++) {
+        var x = MeetupJSONfinal[i];
+        x.show = (iterate([x.name, x.link], arr)) ? true : false;
+    } drawMeetups(MeetupJSONfinal);
 }
 
-function getCatagoryAmount(indexes) {
-    var x = 0;
-    var group = document.getElementsByClassName("group");
-    for (var i = 0; i < meetups.length; i++) {
-        if (iterate(group[i], indexes)) {
-            x += 1;
-        }
-    }
-    return x;
+function getCatagoryAmount(arr) {
+    var j = 0;
+    for (var i = 0; i < MeetupJSONfinal.length; i++) {
+        var x = MeetupJSONfinal[i];
+        if (iterate([x.name, x.link], arr)) j++;
+    } return j;
 }
 
-function iterate(html, array) {
-    for (var i = 0; i < array.length; i++) {
-        if (html.innerHTML.includes(array[i])) {
-            return true;
+function iterate(words, arr) {
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < words.length; j++) {
+            if (words[j].includes(arr[i])) return true;
         }
-    }
-    return false;
-}
-
-function fullArray() {
-    var a = [];
-    for (var i = 0; i < meetups.length; i++) {
-        a.push(i);
-    }
-    return a;
+    } return false;
 }
 
 function ordinalSuffix(i) {
@@ -697,7 +635,7 @@ function setupButtons() {
     blockchain = document.getElementById("blockchain");
     method = document.getElementById("method");
 
-    var allIndex = fullArray();
+    var allIndex = [""];
     var socialIndex = ["freelance", "North-West-IT-Crowd-Beer-BBQ", "Social-Software", "HackerNestMAN"];
     var uxIndex = ["UX"];
     var workshopsIndex = ["CodeUp", "Code-Your-Future", "CoderDojo"];
@@ -721,43 +659,43 @@ function setupButtons() {
 
     all.addEventListener("click", function () {
         showEvents(allIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
     social.addEventListener("click", function () {
         showEvents(socialIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
     ux.addEventListener("click", function () {
         showEvents(uxIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
     workshops.addEventListener("click", function () {
         showEvents(workshopsIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
     specialized.addEventListener("click", function () {
         showEvents(specializedIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
     data.addEventListener("click", function () {
         showEvents(dataIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
     web.addEventListener("click", function () {
         showEvents(webIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
     ladies.addEventListener("click", function () {
         showEvents(ladiesIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
     blockchain.addEventListener("click", function () {
         showEvents(blockchainIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
     method.addEventListener("click", function () {
         showEvents(methodIndex);
-        selectOnlyAllShown();
+        selectAllShown();
     });
 }
 
@@ -782,30 +720,30 @@ function initDOMelements() {
 
     // Sorts
     document.getElementById("default").addEventListener("click", function () {
-        drawMeetups(MeetupsJSONfinal.sort((a, b) => a.sortID - b.sortID));
+        drawMeetups(MeetupJSONfinal.sort((a, b) => a.sortID - b.sortID));
     });
     document.getElementById("az").addEventListener("click", function () {
-        drawMeetups(MeetupsJSONfinal.sort((a, b) => {
+        drawMeetups(MeetupJSONfinal.sort((a, b) => {
             if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
             if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
             return 0;
         }));  
     });
     document.getElementById("za").addEventListener("click", function () {
-        drawMeetups(MeetupsJSONfinal.sort((a, b) => {
+        drawMeetups(MeetupJSONfinal.sort((a, b) => {
             if (a.name.toLowerCase() > b.name.toLowerCase()) return -1;
             if (a.name.toLowerCase() < b.name.toLowerCase()) return 1;
             return 0;
         }));  
     });
     document.getElementById("membersAsc").addEventListener("click", function () {
-        drawMeetups(MeetupsJSONfinal.sort((a, b) => b.members - a.members)); 
+        drawMeetups(MeetupJSONfinal.sort((a, b) => b.members - a.members)); 
     });
     document.getElementById("membersDesc").addEventListener("click", function () {
-        drawMeetups(MeetupsJSONfinal.sort((a, b) => a.members - b.members)); 
+        drawMeetups(MeetupJSONfinal.sort((a, b) => a.members - b.members)); 
     });
     document.getElementById("upcoming").addEventListener("click", function () {
-        drawMeetups(MeetupsJSONfinal.sort((a, b) => {
+        drawMeetups(MeetupJSONfinal.sort((a, b) => {
             if (a.tilNext != 'N/A' && b.tilNext != 'N/A') return a.tilNext - b.tilNext;
             if (a.tilNext == 'N/A') return 1;
             if (b.tilNext == 'N/A') return -1;
@@ -815,7 +753,7 @@ function initDOMelements() {
 
     generate.addEventListener("click", function () {
         spinner();
-        generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()), "");
+        generateCalendar(getSelectedMeetups(), ""); // generateCalendar(getMeetupsFromIndexes(getSelectedMeetupsIndexes()), "");
     });
     searchBox.addEventListener("keyup", searchMeetups);
     navSearchBox.addEventListener("keyup", searchMeetups);
@@ -823,7 +761,7 @@ function initDOMelements() {
     clearNavSearch.addEventListener("click", clearMeetupSearch);
 
     select.addEventListener("click", selectAllShown);
-    // selectShown.addEventListener("click", selectOnlyAllShown);
+    // selectShown.addEventListener("click", selectAllShown);
     deselect.addEventListener("click", deselectAllShown);
     invertSelect.addEventListener("click", invertSelection);
 
