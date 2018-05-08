@@ -19,7 +19,7 @@ var meetups = ["android_mcr", "BCS-Greater-Manchester-Branch", "blabtalks", "mee
 
 const months = new Map([[1, 'January'], [2, 'February'], [3, 'March'], [4, 'April'], [5, 'May'], [6, 'June'], [7, 'July'], [8, 'August'], [9, 'September'], [10, 'October'], [11, 'November'], [12, 'December']]);
 const abvMonths = new Map([[1, 'Jan'], [2, 'Feb'], [3, 'March'], [4, 'Apr'], [5, 'May'], [6, 'Jun'], [7, 'Jul'], [8, 'Aug'], [9, 'Sept'], [10, 'Oct'], [11, 'Nov'], [12, 'Dec']]);
-const abvDays = new Map([[0,"Mon"],[1,"Tue"],[2,"Wed"],[3,"Thur"],[4,"Fri"],[5,"Sat"],[6,"Sun"]]);
+const abvDays = new Map([[0,"Sun"],[1,"Mon"],[2,"Tue"],[3,"Wed"],[4,"Thur"],[5,"Fri"],[6,"Sat"]]);
 
 var eventsJSON = meetups;
 var MeetupsJSON = meetups;
@@ -493,7 +493,7 @@ function drawMeetupEvent(x) {
         timeRange = timeConvert(time);
     }
 
-    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get(new Date(date).getDay() - 1).toUpperCase() + " | " + abvMonths.get(parseInt(x.local_date.substring(5, 7))).toUpperCase() + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p> ' + fee + '</div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p class="location">' + venue + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get((new Date(date).getDay())).toUpperCase() + " | " + abvMonths.get(parseInt(x.local_date.substring(5, 7))).toUpperCase() + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p> ' + fee + '</div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p class="location">' + venue + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
 
     eventsContainer.insertAdjacentHTML('beforeend', event);
 }
@@ -510,7 +510,7 @@ function drawTechNWEvent(x) {
     var location = (x.hasOwnProperty('location')) ? x.location : "N/A";
     var link = x.htmlLink;
 
-    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get(new Date(date).getDay() - 1).toUpperCase() + " | " + abvMonths.get(month).toUpperCase() + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p class="location">' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get((new Date(date).getDay())).toUpperCase() + " | " + abvMonths.get(month).toUpperCase() + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p class="location">' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
 
     eventsContainer.insertAdjacentHTML('beforeend', event);
 }
