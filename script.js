@@ -493,7 +493,7 @@ function drawMeetupEvent(x) {
         timeRange = timeConvert(time);
     }
 
-    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get(new Date(date).getDay()).toUpperCase() + " | " + abvMonths.get(parseInt(x.local_date.substring(5, 7)) - 1).toUpperCase() + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p> ' + fee + '</div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p class="location">' + venue + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get(new Date(date).getDay() - 1).toUpperCase() + " | " + abvMonths.get(parseInt(x.local_date.substring(5, 7))).toUpperCase() + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p> ' + fee + '</div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p class="location">' + venue + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
 
     eventsContainer.insertAdjacentHTML('beforeend', event);
 }
@@ -510,7 +510,7 @@ function drawTechNWEvent(x) {
     var location = (x.hasOwnProperty('location')) ? x.location : "N/A";
     var link = x.htmlLink;
 
-    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get(new Date(date).getDay()).toUpperCase() + " | " + abvMonths.get(month - 1).toUpperCase() + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p class="location">' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get(new Date(date).getDay() - 1).toUpperCase() + " | " + abvMonths.get(month).toUpperCase() + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p class="location">' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
 
     eventsContainer.insertAdjacentHTML('beforeend', event);
 }
