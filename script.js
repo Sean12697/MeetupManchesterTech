@@ -18,6 +18,8 @@ var meetups = ["android_mcr", "BCS-Greater-Manchester-Branch", "blabtalks", "mee
 // DEAD GROUPS:  ManchesterData, Manchester-Elastic-Fantastics, Manchester-Cassandra-Users, Manchester-MongoDB-User-Group, The-Manchester-PostgreSQL-Meetup, Manchester-Web-Performance-Group
 
 const months = new Map([[1, 'January'], [2, 'February'], [3, 'March'], [4, 'April'], [5, 'May'], [6, 'June'], [7, 'July'], [8, 'August'], [9, 'September'], [10, 'October'], [11, 'November'], [12, 'December']]);
+const abvMonths = new Map([[1, 'Jan'], [2, 'Feb'], [3, 'March'], [4, 'Apr'], [5, 'May'], [6, 'Jun'], [7, 'Jul'], [8, 'Aug'], [9, 'Sept'], [10, 'Oct'], [11, 'Nov'], [12, 'Dec']]);
+const abvDays = new Map([[0,"Mon"],[1,"Tue"],[2,"Wed"],[3,"Thur"],[4,"Fri"],[5,"Sat"],[6,"Sun"]]);
 
 var eventsJSON = meetups;
 var MeetupsJSON = meetups;
@@ -151,6 +153,7 @@ function daysSince(epoch) { // using epoch time since "local_date" is not always
 }
 
 function searchEventsFor() {
+    spinner();
     getTechNW(true, eventSearch.value.toUpperCase());
 }
 
@@ -490,7 +493,7 @@ function drawMeetupEvent(x) {
         timeRange = timeConvert(time);
     }
 
-    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p> ' + fee + '</div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p>' + venue + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get(new Date(date).getDay()).toUpperCase() + " | " + abvMonths.get(parseInt(x.local_date.substring(5, 7))).toUpperCase() + '</p><p>' + timeRange + '</p><p>' + rsvp + '/' + rsvpLimit + '</p> ' + fee + '</div><div class="details"><a href="' + eventLink + '" target="_blank"><h4>' + eventName + '</h4></a><p class="location">' + venue + '</p><a href="' + groupLink + '" target="_blank"><p>' + groupName + '</p></a></div>';
 
     eventsContainer.insertAdjacentHTML('beforeend', event);
 }
@@ -507,7 +510,7 @@ function drawTechNWEvent(x) {
     var location = (x.hasOwnProperty('location')) ? x.location : "N/A";
     var link = x.htmlLink;
 
-    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p>' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
+    var event = '<div class="event"><div class="numbers"><p class="day">' + ordinalSuffix(day) + '</p><p class="abv">' + abvDays.get(new Date(date).getDay()).toUpperCase() + " | " + abvMonths.get(month).toUpperCase() + '</p><p>' + timeConvert(time) + '</p></div><div class="details"><a href="' + link + '" target="_blank"><h4>' + name + '</h4></a><p class="location">' + location + '</p><a href="http://technw.uk/calendar" target="_blank"><p> TechNW </p></a></div>';
 
     eventsContainer.insertAdjacentHTML('beforeend', event);
 }
@@ -745,6 +748,9 @@ function initDOMelements() {
     document.getElementById("upcoming").addEventListener("click", function () {
         drawMeetups(MeetupJSONfinal.sort((a, b) => {
             if (a.tilNext != 'N/A' && b.tilNext != 'N/A') return a.tilNext - b.tilNext;
+            if (a.tilNext == 'N/A' && b.tilNext == 'N/A' && a.sinceLast != 'N/A' && b.sinceLast != 'N/A') return a.sinceLast - b.sinceLast;
+            if (a.tilNext == 'N/A' && b.tilNext == 'N/A' && a.sinceLast == 'N/A' && b.sinceLast != 'N/A') return 1;
+            if (a.tilNext == 'N/A' && b.tilNext == 'N/A' && a.sinceLast != 'N/A' && b.sinceLast == 'N/A') return -1;
             if (a.tilNext == 'N/A') return 1;
             if (b.tilNext == 'N/A') return -1;
             return 0;

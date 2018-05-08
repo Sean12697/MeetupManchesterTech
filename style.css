@@ -106,8 +106,12 @@ input[type="button"]:hover {
     transform: scale(1.05);
 }
 
+.numbers p {
+    font-size: 0.9em;
+}
+
 .day {
-    font-size: 1.6em;
+    font-size: 1.6em !important;
 }
 
 #groupsContainer {
@@ -162,7 +166,7 @@ input[type="button"]:hover {
     margin: 0px 10px;
 }
 
-.event .details h4 {
+.event .details h4, .location {
     height: 40px;
     margin: 10px 0px;
     overflow: hidden;
