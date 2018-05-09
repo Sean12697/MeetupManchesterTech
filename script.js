@@ -3,9 +3,10 @@ window.addEventListener('load', init);
 
 var searchBox, navSearchBox, search, clearSearch, clearNavSearch, generate, loadingText;
 // Catagory Elements
-var all, social, ux, workshops, specialized, data, web, ladies, blockchain, method;
-
-var select, selectShown, deselect,invertSelect;
+var all, ux, data, web, ladies, blockchain, workshops;
+var inactive, nothing, showInactive = false,
+    showNothing = false;
+var select, selectShown, deselect, invertSelect;
 // var def, az, za, membersAsc, membersDesc, upcoming;
 var groupsContainer, eventsContainer;
 var eventSearch, searchEvents;
@@ -14,8 +15,7 @@ var techNW, generateAll;
 let gSelected = 10; // Bodge for one selected meetup group, needs to be more than 1 for search
 
 const commonWords = ["MANCHESTER", "GROUP", "USER", "-"];
-var meetups = ["android_mcr", "BCS-Greater-Manchester-Branch", "blabtalks", "meetup-group-wHuRVtrk", "CIA-Chicks-in-Advertising-Manchester", "Code-Your-Future-Manchester", "CodeUpManchester", "CodeUp-Salford", "Digital-Analytics-Manchester", "Digital_North_", "DotNetNorth", "Enterprise-UX", "freelance-folk-manchester", "HackerNestMAN", "hackspace-manchester", "HadoopManchester", "HCD-Manchester", "IoTMCR", "JavaScript-North-West", "Ladies-of-Code-Manchester", "Lean-Agile-Manchester", "MaccTech", "Magento-Minds-of-Manchester", "MancDB", "Manchester-Bitcoin-blockchain-and-other-cryptocurrencies", "Manchester-Angular-Workshop", "manchesterentrepreneursclub", "Manchester-Futurists", "Manchester-Grey-Hats", "Manchester-InfoSec", "ManchesterUK-Java-Community", "Power-BI-Manchester-Meetup", "Manchester-R", "Manchester-React-User-Group", "ManchesterWordPressUserGroup", "MancJS", "McrFRED", "McrUXD", "Messaging-Bots-Manchester", "Neo4j-Manchester", "North-West-IT-Crowd-Beer-BBQ-Event", "North-West-Ruby-User-Group", "Open-Data-Manchester", "Practical-Business-Workshops-Manchester", "RealUX", "Salford-Lean-Startup", "scala-developers", "SEO-Manchester", "Social-Software-Development-Meetup-in-Manchester", "Tech-for-Good-Live", "Tech-Leads-NW", "Test-Hive-Manchester", "ThoughtWorks-Manchester-Events", "UK-North-Crypto-Currency-Meetup", "The-UX-Crunch-North", "VRManchester", "AWS-User-Group-North", "Code-Nation", "Manchester-Open-Source", "DevOps-Manchester", "StartupBlink-Manchester", "nwdrupal", "Manchester-Xamarin-User-Group", "manchester-node-workshop", "DATA-VISUALISATION-MEETUP", "BlockchainManchesterMeetup", "Manchester-WordPress-SEO-Startup", "Manchester-Unity3D-Game-Dev-Meetup", "Google-Cloud-Platform-Users-North-West", "Manc-Bitcoin", "craftcmsmanchester", "Couchbase-Manchester", "NSManchester", "Python-North-West-Meetup", "Expert-Talks-Manchester", "HER-Data-MCR", "northernsoho", "North-West-Playtesters", "VueJS-Manchester", "North-West-Tester-Gathering", "etechmcr", "Introduction-to-Bitcoin-and-Cryptoeconomics", "Bitcoin-Manchester", "Manchester-F-User-Group", "Manchester-Technology-Leaders-Meet-Up-Group", "North-West-Bitcoin-Meetup", "WMUGMCR", "Kotlin-Manchester", "Docker-Manchester", "Manchester-OpenStack-Meetup", "Women-in-Technology-North", "IBM-PowerAI-Manchester", "MCR-CoderDojo", "meetup-group-MsiOIcyg", "Manchester-Blockchain-Organisation", "EOS-Manchester", "HacksHackersMCR", "R-Ladies-Manchester", "golang-mcr", "Ministry-of-Testing-Manchester", "Redis-Manchester", "gdg_manchester", "Manchester-Artificial-Intelligence-Meetup","GraphQL-Manchester", "PyData-Manchester","Codebar-Manchester", "The-Future-of-DevOps-and-Security", "Manchester-Kafka", "Manchester-Bitcoin-Miners-Meetup", "EndHomelessness-digital-community"]; // wHuRVtrk = Blockchain, meetup-group-MsiOIcyg = M1Con
-// DEAD GROUPS:  ManchesterData, Manchester-Elastic-Fantastics, Manchester-Cassandra-Users, Manchester-MongoDB-User-Group, The-Manchester-PostgreSQL-Meetup, Manchester-Web-Performance-Group
+var meetups = ["android_mcr", "BCS-Greater-Manchester-Branch", "blabtalks", "meetup-group-wHuRVtrk", "CIA-Chicks-in-Advertising-Manchester", "Code-Your-Future-Manchester", "CodeUpManchester", "CodeUp-Salford", "Digital-Analytics-Manchester", "Digital_North_", "DotNetNorth", "Enterprise-UX", "freelance-folk-manchester", "HackerNestMAN", "hackspace-manchester", "HadoopManchester", "HCD-Manchester", "IoTMCR", "JavaScript-North-West", "Ladies-of-Code-Manchester", "Agile-Manchester", "Lean-Agile-Manchester", "MaccTech", "Magento-Minds-of-Manchester", "MancDB", "Manchester-Bitcoin-blockchain-and-other-cryptocurrencies", "Manchester-Angular-Workshop", "manchesterentrepreneursclub", "Manchester-Futurists", "Manchester-Grey-Hats", "Manchester-InfoSec", "ManchesterUK-Java-Community", "Power-BI-Manchester-Meetup", "Manchester-R", "Manchester-React-User-Group", "ManchesterWordPressUserGroup", "MancJS", "McrFRED", "McrUXD", "Messaging-Bots-Manchester", "Neo4j-Manchester", "North-West-IT-Crowd-Beer-BBQ-Event", "North-West-Ruby-User-Group", "Open-Data-Manchester", "Practical-Business-Workshops-Manchester", "RealUX", "Salford-Lean-Startup", "scala-developers", "SEO-Manchester", "Social-Software-Development-Meetup-in-Manchester", "Tech-for-Good-Live", "Tech-Leads-NW", "Test-Hive-Manchester", "ThoughtWorks-Manchester-Events", "UK-North-Crypto-Currency-Meetup", "The-UX-Crunch-North", "VRManchester", "AWS-User-Group-North", "Code-Nation", "Manchester-Open-Source", "DevOps-Manchester", "StartupBlink-Manchester", "nwdrupal", "Manchester-Xamarin-User-Group", "manchester-node-workshop", "DATA-VISUALISATION-MEETUP", "BlockchainManchesterMeetup", "Manchester-WordPress-SEO-Startup", "Manchester-Unity3D-Game-Dev-Meetup", "Google-Cloud-Platform-Users-North-West", "Manc-Bitcoin", "craftcmsmanchester", "Couchbase-Manchester", "NSManchester", "Python-North-West-Meetup", "Expert-Talks-Manchester", "HER-Data-MCR", "northernsoho", "North-West-Playtesters", "VueJS-Manchester", "North-West-Tester-Gathering", "etechmcr", "Introduction-to-Bitcoin-and-Cryptoeconomics", "Bitcoin-Manchester", "Manchester-F-User-Group", "Manchester-Technology-Leaders-Meet-Up-Group", "North-West-Bitcoin-Meetup", "WMUGMCR", "Kotlin-Manchester", "Docker-Manchester", "Manchester-OpenStack-Meetup", "Women-in-Technology-North", "IBM-PowerAI-Manchester", "MCR-CoderDojo", "meetup-group-MsiOIcyg", "Manchester-Blockchain-Organisation", "EOS-Manchester", "HacksHackersMCR", "R-Ladies-Manchester", "golang-mcr", "Ministry-of-Testing-Manchester", "Redis-Manchester", "gdg_manchester", "Manchester-Artificial-Intelligence-Meetup", "GraphQL-Manchester", "PyData-Manchester", "Codebar-Manchester", "The-Future-of-DevOps-and-Security", "Manchester-Kafka", "Manchester-Bitcoin-Miners-Meetup", "EndHomelessness-digital-community", "uxey-manchester", "ManchesterData", "Manchester-Elastic-Fantastics", "Manchester-Cassandra-Users", "Manchester-MongoDB-User-Group", "The-Manchester-PostgreSQL-Meetup", "Manchester-Web-Performance-Group", "North-West-Women-in-Technology-and-Digital", "Manchester-Conversion-Optimisation-Meetup", "The-DevOps-Battle-Royale", "leanmanc", "Techs-and-The-City", "Manchester-Mobile-Development-Meetup", "CRUMUG-UK-North-West", "Manchester-MySQL-Meetup", "Manchester-Tyks", "Analytics-at-Speed-Manchester", "elm-manchester", "Manchester-OpenStack-Meetup"]; // wHuRVtrk = Blockchain, meetup-group-MsiOIcyg = M1Con
 
 const months = new Map([[1, 'January'], [2, 'February'], [3, 'March'], [4, 'April'], [5, 'May'], [6, 'June'], [7, 'July'], [8, 'August'], [9, 'September'], [10, 'October'], [11, 'November'], [12, 'December']]);
 const abvMonths = new Map([[1, 'Jan'], [2, 'Feb'], [3, 'March'], [4, 'Apr'], [5, 'May'], [6, 'Jun'], [7, 'Jul'], [8, 'Aug'], [9, 'Sept'], [10, 'Oct'], [11, 'Nov'], [12, 'Dec']]);
@@ -38,53 +38,59 @@ function withoutMCR(x) {
     return x.toLowerCase().replace("manchester-", "").replace("manchesteruk-", "").replace("manchester", "").replace("manc", "").replace("mcr", "").replace("-", "");
 }
 
+function toShow(meetupGroup) {
+    if (meetupGroup.show && !((meetupGroup.sinceLast > 90 && !showInactive) || (meetupGroup.sinceLast == "N/A" && meetupGroup.tilNext == "N/A" && !showNothing))) {
+        return true;
+    } return false;
+}
+
 function drawMeetups(JSON) {
     groupsContainer.innerHTML = "";
     for (var i = 0; i < JSON.length; i++) {
-        if (JSON[i].show) {
-        var x = JSON[i];
-        var name = x.name;
-        var link = x.link;
-        var id = link.replace("https://www.meetup.com/", "").replace("/", "");
-        var members = x.members;
-        var tilNext = x.tilNext;
-        var sinceLast = x.sinceLast;
+        if (toShow(JSON[i])) {
+            var x = JSON[i];
+            var name = x.name;
+            var link = x.link;
+            var id = link.replace("https://www.meetup.com/", "").replace("/", "");
+            var members = x.members;
+            var tilNext = x.tilNext;
+            var sinceLast = x.sinceLast;
 
-        var txtEvents = 'N/A';
-        if (tilNext == 'N/A' && sinceLast == 'N/A') {
-            txtEvents = 'No Events';
-        } else {
-            if (tilNext == 'N/A') {
-                txtEvents = (sinceLast == 1) ? 'YESTERDAY' : 'Last: ' + sinceLast + ' Days';
+            var txtEvents = 'N/A';
+            if (tilNext == 'N/A' && sinceLast == 'N/A') {
+                txtEvents = 'No Events';
             } else {
-                switch (tilNext) {
-                    case 0:
-                        txtEvents = 'TODAY';
-                        break;
-                    case 1:
-                        txtEvents = 'TOMORROW';
-                        break;
-                    default: 
-                        txtEvents = 'Next: ' + tilNext + ' Days';
+                if (tilNext == 'N/A') {
+                    txtEvents = (sinceLast == 1) ? 'YESTERDAY' : 'Last: ' + sinceLast + ' Days';
+                } else {
+                    switch (tilNext) {
+                        case 0:
+                            txtEvents = 'TODAY';
+                            break;
+                        case 1:
+                            txtEvents = 'TOMORROW';
+                            break;
+                        default:
+                            txtEvents = 'Next: ' + tilNext + ' Days';
+                    }
                 }
             }
-        }
 
-        var thumb = 'blank.jpg';
-        if (x.hasOwnProperty('group_photo')) {
-            thumb = x.group_photo.photo_link;
-        } else {
-            if(x.hasOwnProperty('organizer')) {
-                if (x.organizer.hasOwnProperty('photo')) {
-                    thumb = x.organizer.photo.photo_link;
+            var thumb = 'blank.jpg';
+            if (x.hasOwnProperty('group_photo')) {
+                thumb = x.group_photo.photo_link;
+            } else {
+                if (x.hasOwnProperty('organizer')) {
+                    if (x.organizer.hasOwnProperty('photo')) {
+                        thumb = x.organizer.photo.photo_link;
+                    }
                 }
             }
+
+            var group = '<div class="group" id="' + id + '"><div class="meetupImg"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label></div><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '<br/>' + txtEvents + '</p></div></div>';
+            groupsContainer.insertAdjacentHTML('beforeend', group);
         }
-        
-        var group = '<div class="group" id="' + id + '"><div class="meetupImg"><input type="checkbox" id="g' + i + '"><label for="g' + i + '"><img src="' + thumb + '"></label></div><div class="groupText"><a href="' + link + '" target="_blank"><p class="groupName">' + name + '</p></a><p>Members: ' + members + '<br/>' + txtEvents + '</p></div></div>';
-        groupsContainer.insertAdjacentHTML('beforeend', group);
-    }
-    }
+    } setupButtons();
 }
 
 function initGetMeetups() {
@@ -118,7 +124,8 @@ function addUntilNext(MeetupsJSON) {
     loadingText.innerHTML = "Adding Until Next";
     for (var i = 0; i < MeetupsJSON.length; i++) {
         MeetupsJSON[i].tilNext = (MeetupsJSON[i].hasOwnProperty('next_event')) ? daysUntil(MeetupsJSON[i].next_event.time) : "N/A";
-    } addSince(MeetupsJSON);
+    }
+    addSince(MeetupsJSON);
 }
 
 function addSince(MeetupsJSON) {
@@ -126,30 +133,31 @@ function addSince(MeetupsJSON) {
     loadingText.innerHTML = "Adding Since Last";
     i = i.map(app.getPastEvents);
     $.when(...i)
-    .then((...i) => {
-        i = i.map(a => a[0].data);
-        //console.log(i);
-        for (var j = 0; j < i.length; j++) {
-           // console.log(i[j][0]);
-            MeetupsJSON[j].sinceLast = (i[j].length == 0) ? "N/A" : daysSince(i[j][0].time);
-            MeetupsJSON[j].sortID = j;
-            MeetupsJSON[j].show = true;
-        } MeetupJSONfinal = MeetupsJSON;
-        drawMeetups(MeetupsJSON);
-        setupButtons();
-    });
+        .then((...i) => {
+            i = i.map(a => a[0].data);
+            //console.log(i);
+            for (var j = 0; j < i.length; j++) {
+                // console.log(i[j][0]);
+                MeetupsJSON[j].sinceLast = (i[j].length == 0) ? "N/A" : daysSince(i[j][0].time);
+                MeetupsJSON[j].sortID = j;
+                MeetupsJSON[j].show = true;
+            }
+            MeetupJSONfinal = MeetupsJSON;
+            drawMeetups(MeetupsJSON);
+            setupButtons();
+        });
 }
 
 function daysUntil(epoch) { // using epoch time since "local_date" is not always defined
     var now = new Date();
     var event = new Date(epoch); //var event = new Date(date.substr(0,4),date.substr(5,2),date.substr(8,2));
-    return Math.round(Math.abs((now.getTime() - event.getTime()) / (24*60*60*1000)));
+    return Math.round(Math.abs((now.getTime() - event.getTime()) / (24 * 60 * 60 * 1000)));
 }
 
 function daysSince(epoch) { // using epoch time since "local_date" is not always defined
     var now = new Date();
     var event = new Date(epoch); //var event = new Date(date.substr(0,4),date.substr(5,2),date.substr(8,2));
-    return Math.round(Math.abs((event.getTime() - now.getTime()) / (24*60*60*1000)));
+    return Math.round(Math.abs((event.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)));
 }
 
 function searchEventsFor() {
@@ -173,7 +181,7 @@ function generateCalendar(x, t) {
             } else {
                 eventsJSON = eventsJSON.map(a => a.data)[0];
             }
-            
+
             console.log(eventsJSON);
             eventsJSON = addLocal(eventsJSON);
             console.log(eventsJSON);
@@ -187,7 +195,8 @@ function searchMeetups() {
     var term = searchBox.value.toLowerCase();
     for (var i = 0; i < MeetupJSONfinal.length; i++) {
         MeetupJSONfinal[i].show = (MeetupJSONfinal[i].name.toLowerCase().includes(term)) ? true : false;
-    } drawMeetups(MeetupJSONfinal);
+    }
+    drawMeetups(MeetupJSONfinal);
     selectAllShown();
 }
 
@@ -217,7 +226,8 @@ function getSelectedMeetups() {
     var groups = document.getElementsByClassName("group");
     for (var i = 0; i < groups.length; i++) {
         if (groups[i].firstChild.childNodes[0].checked === false) selected.push(groups[i].id);
-    } gSelected = selected.length;
+    }
+    gSelected = selected.length;
     return selected;
 }
 
@@ -241,8 +251,8 @@ app.getMeetups = (meetup) => $.ajax({
 
 function getTechNW(merge, t) {
     var r = new XMLHttpRequest();
-    
-    r.open('GET', 'https://www.googleapis.com/calendar/v3/calendars/a73q3trj8bssqjifgolb1q8fr4@group.calendar.google.com/events?key=AIzaSyCR3-ptjHE-_douJsn8o20oRwkxt-zHStY&maxResults=9999&singleEvents=true&orderBy=starttime&timeMin=' + ISODateString(new Date()) + "&timeMax=" + ISODateString(new Date ((new Date().valueOf()) + 31540000000)), true);
+
+    r.open('GET', 'https://www.googleapis.com/calendar/v3/calendars/a73q3trj8bssqjifgolb1q8fr4@group.calendar.google.com/events?key=AIzaSyCR3-ptjHE-_douJsn8o20oRwkxt-zHStY&maxResults=9999&singleEvents=true&orderBy=starttime&timeMin=' + ISODateString(new Date()) + "&timeMax=" + ISODateString(new Date((new Date().valueOf()) + 31540000000)), true);
 
     r.onload = () => {
         var data = JSON.parse(r.responseText);
@@ -313,7 +323,8 @@ function addLocal(JSON) {
             JSON[i].local_date = time.getFullYear() + '-' + month + '-' + day;
             JSON[i].local_time = hour + ':' + minute;
         }
-    } return JSON;
+    }
+    return JSON;
 }
 
 function mergeMeetupTechNW(Meetup, TechNW) {
@@ -530,15 +541,20 @@ function showEvents(arr) {
     for (var i = 0; i < MeetupJSONfinal.length; i++) {
         var x = MeetupJSONfinal[i];
         x.show = (iterate([x.name, x.link], arr)) ? true : false;
-    } drawMeetups(MeetupJSONfinal);
+    }
+    drawMeetups(MeetupJSONfinal);
 }
 
 function getCatagoryAmount(arr) {
-    var j = 0;
+    var total = 0, shown = 0;
     for (var i = 0; i < MeetupJSONfinal.length; i++) {
         var x = MeetupJSONfinal[i];
-        if (iterate([x.name, x.link], arr)) j++;
-    } return j;
+        if (iterate([x.name, x.link], arr)) {
+            total++;
+            if (toShow(MeetupJSONfinal[i])) shown++;
+        }
+    }
+    return "(" + shown + " | " + total + ")";
 }
 
 function iterate(words, arr) {
@@ -546,7 +562,8 @@ function iterate(words, arr) {
         for (var j = 0; j < words.length; j++) {
             if (words[j].includes(arr[i])) return true;
         }
-    } return false;
+    }
+    return false;
 }
 
 function ordinalSuffix(i) {
@@ -628,56 +645,44 @@ function ISODateString(d) {
 
 function setupButtons() {
     all = document.getElementById("all");
-    social = document.getElementById("social");
+    // social = document.getElementById("social");
     ux = document.getElementById("ux");
     workshops = document.getElementById("workshops");
-    specialized = document.getElementById("specialized");
+    // specialized = document.getElementById("specialized");
     data = document.getElementById("data");
     web = document.getElementById("web");
     ladies = document.getElementById("ladies");
     blockchain = document.getElementById("blockchain");
-    method = document.getElementById("method");
+    // method = document.getElementById("method");
 
     var allIndex = [""];
-    var socialIndex = ["freelance", "North-West-IT-Crowd-Beer-BBQ", "Social-Software", "HackerNestMAN"];
-    var uxIndex = ["UX"];
-    var workshopsIndex = ["CodeUp", "Code-Your-Future", "CoderDojo"];
-    var specializedIndex = ["DotNetNorth", "Magento", "Java", "Manchester-R", "ManchesterWordPressUserGroup", "JS", "Ruby", "scala"];
-    var dataIndex = ["Digital-Analytics-Manchester", "DB", "InfoSec", "Power-BI", "Manchester-R", "Neo4j-Manchester", "Data", "Couchbase"];
-    var webIndex = ["JavaScript", "SEO", "AWS", "node", "JS", "React", "Angular", "FRED", "WordPress"];
+    // var socialIndex = ["freelance", "North-West-IT-Crowd-Beer-BBQ", "Social-Software", "HackerNestMAN"];
+    var uxIndex = ["UX", "uxey", "Conversion-Optimisation"];
+    var workshopsIndex = ["CodeUp", "Code-Your-Future", "CoderDojo", "Codebar"];
+    // var specializedIndex = ["DotNetNorth", "Magento", "Java", "Manchester-R", "ManchesterWordPressUserGroup", "JS", "Ruby", "scala"];
+    var dataIndex = ["Analytics", "MySQL", "Digital-Analytics-Manchester", "R-Ladies", "DB", "InfoSec", "Power-BI", "Manchester-R", "Neo4j-Manchester", "Data", "Couchbase"];
+    var webIndex = ["JavaScript", "SEO", "AWS", "node", "JS", "React", "Angular", "FRED", "WordPress", "MongoDB"];
     var ladiesIndex = ["CIA", "Ladies", "HER-Data-MCR", "Women"];
     var blockchainIndex = ["wHuRVtrk", "Bitcoin", "Crypto-Currency", "Blockchain", "EOS"];
-    var methodIndex = ["Lean", "Expert-Talks-Manchester"];
+    // var methodIndex = ["Lean", "Expert-Talks-Manchester"];
 
     all.value = "All | " + getCatagoryAmount(allIndex);
-    social.value = "Social | " + getCatagoryAmount(socialIndex);
+    // social.value = "Social | " + getCatagoryAmount(socialIndex);
     ux.value = "UX | " + getCatagoryAmount(uxIndex);
     workshops.value = "Workshops | " + getCatagoryAmount(workshopsIndex);
-    specialized.value = "Specialized | " + getCatagoryAmount(specializedIndex);
+    // specialized.value = "Specialized | " + getCatagoryAmount(specializedIndex);
     data.value = "Data | " + getCatagoryAmount(dataIndex);
     web.value = "Web | " + getCatagoryAmount(webIndex);
     ladies.value = "Women/Ladies | " + getCatagoryAmount(ladiesIndex);
     blockchain.value = "Blockchain | " + getCatagoryAmount(blockchainIndex);
-    method.value = "Methodologies | " + getCatagoryAmount(methodIndex);
+    // method.value = "Methodologies | " + getCatagoryAmount(methodIndex);
 
     all.addEventListener("click", function () {
         showEvents(allIndex);
         selectAllShown();
     });
-    social.addEventListener("click", function () {
-        showEvents(socialIndex);
-        selectAllShown();
-    });
     ux.addEventListener("click", function () {
         showEvents(uxIndex);
-        selectAllShown();
-    });
-    workshops.addEventListener("click", function () {
-        showEvents(workshopsIndex);
-        selectAllShown();
-    });
-    specialized.addEventListener("click", function () {
-        showEvents(specializedIndex);
         selectAllShown();
     });
     data.addEventListener("click", function () {
@@ -696,8 +701,8 @@ function setupButtons() {
         showEvents(blockchainIndex);
         selectAllShown();
     });
-    method.addEventListener("click", function () {
-        showEvents(methodIndex);
+    workshops.addEventListener("click", function () {
+        showEvents(workshopsIndex);
         selectAllShown();
     });
 }
@@ -730,20 +735,20 @@ function initDOMelements() {
             if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
             if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
             return 0;
-        }));  
+        }));
     });
     document.getElementById("za").addEventListener("click", function () {
         drawMeetups(MeetupJSONfinal.sort((a, b) => {
             if (a.name.toLowerCase() > b.name.toLowerCase()) return -1;
             if (a.name.toLowerCase() < b.name.toLowerCase()) return 1;
             return 0;
-        }));  
+        }));
     });
     document.getElementById("membersAsc").addEventListener("click", function () {
-        drawMeetups(MeetupJSONfinal.sort((a, b) => b.members - a.members)); 
+        drawMeetups(MeetupJSONfinal.sort((a, b) => b.members - a.members));
     });
     document.getElementById("membersDesc").addEventListener("click", function () {
-        drawMeetups(MeetupJSONfinal.sort((a, b) => a.members - b.members)); 
+        drawMeetups(MeetupJSONfinal.sort((a, b) => a.members - b.members));
     });
     document.getElementById("upcoming").addEventListener("click", function () {
         drawMeetups(MeetupJSONfinal.sort((a, b) => {
@@ -781,6 +786,25 @@ function initDOMelements() {
         getTechNW(true, "");
     });
 
+    document.getElementById("inactive").addEventListener("click", function () {
+        if (showInactive) {
+            showInactive = false;
+            this.value = "Show Inactive Groups";
+        } else {
+            showInactive = true;
+            this.value = "Hide Inactive Groups";
+        } drawMeetups(MeetupJSONfinal);
+    });
+
+    document.getElementById("nothing").addEventListener("click", function () {
+        if (showNothing) {
+            showNothing = false;
+            this.value = "Show with No Events";
+        } else {
+            showNothing = true;
+            this.value = "Hide with No Events";
+        } drawMeetups(MeetupJSONfinal);
+    });
 }
 
 function spinner() {
