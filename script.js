@@ -134,10 +134,12 @@ function addSince(MeetupsJSON) {
     i = i.map(app.getPastEvents);
     $.when(...i)
         .then((...i) => {
-            i = i.map(a => a[0].data);
+            i = i.map(a => a[0].data)
+                 .filter(function(e) {
+                     return !e.hasOwnProperty("errors");
+                 });
             //console.log(i);
             for (var j = 0; j < i.length; j++) {
-                // console.log(i[j][0]);
                 MeetupsJSON[j].sinceLast = (i[j].length == 0) ? "N/A" : daysSince(i[j][0].time);
                 MeetupsJSON[j].sortID = j;
                 MeetupsJSON[j].show = true;
