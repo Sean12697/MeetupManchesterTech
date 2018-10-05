@@ -658,7 +658,7 @@ function setupButtons() {
 
     var allIndex = [""];
     // var socialIndex = ["freelance", "North-West-IT-Crowd-Beer-BBQ", "Social-Software", "HackerNestMAN"];
-    var uxIndex = ["UX", "uxey", "Conversion-Optimisation", "UXSessions"];
+    var uxIndex = ["UX", "uxey", "Conversion-Optimisation", "UXSessions", "User-Research"];
     var workshopsIndex = ["CodeUp", "Code-Your-Future", "CoderDojo", "Codebar"];
     // var specializedIndex = ["DotNetNorth", "Magento", "Java", "Manchester-R", "ManchesterWordPressUserGroup", "JS", "Ruby", "scala"];
     var dataIndex = ["Analytics", "MySQL", "SQL", "Azure", "Digital-Analytics-Manchester", "R-Ladies", "DB", "InfoSec", "Power-BI", "Manchester-R", "Neo4j-Manchester", "Data", "Couchbase", "PyData"];
