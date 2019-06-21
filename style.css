@@ -399,3 +399,26 @@ details {
         overflow: hidden;
     }
 }
+
+#beta {
+    background-color: red;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    position: absolute;
+}
+
+#beta p {
+    margin: 5px;
+    color: white;
+    font-size: 0.8em;
+} 
+
+#beta a {
+    color: inherit;
+    text-decoration-line: underline;
+}
+
+h1 {
+    margin-top: 30px;
+}
